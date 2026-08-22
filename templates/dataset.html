@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Dataset{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">dataset/GlucoBench_benchmark_dataset_RAW.csv</span>
+    <h1>Dataset</h1>
+    <p>15,731 rows &middot; 31 raw columns &middot; 10 patients (user_id U001&ndash;U010)</p>
+</section>
+
+<div class="card-grid">
+    <div class="card">
+        <h3>Glucose &amp; history</h3>
+        <p>glucose, glucose_lag_1/3/6, glucose_roll_mean_1h, cgm_quality_flag</p>
+    </div>
+    <div class="card">
+        <h3>Insulin &amp; meals</h3>
+        <p>insulin_bolus, insulin_basal, carbs, meal_type, carb_ratio, insulin_sensitivity</p>
+    </div>
+    <div class="card">
+        <h3>Activity &amp; biosignals</h3>
+        <p>exercise_steps, exercise_intensity, heart_rate, skin_temp, gsr, sleep_stage</p>
+    </div>
+    <div class="card">
+        <h3>Patient &amp; context</h3>
+        <p>hbA1c, age, sex, weight, stress_level, alcohol, medication_other, device_id, region</p>
+    </div>
+</div>
+
+<h2 style="margin-top:32px;">Known data quirks</h2>
+<ul class="target-list">
+    <li>Glucose is clipped to <b>[70.0, 198.4] mg/dL</b> &mdash; true hypoglycemia never occurs.</li>
+    <li><b>notes</b> column is 100% empty and is dropped early in the pipeline.</li>
+    <li>Sampling interval is mostly 5&ndash;10 minutes but irregular (5&ndash;45 min gaps occur).</li>
+</ul>
+{% endblock %}

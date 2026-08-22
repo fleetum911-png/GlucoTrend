@@ -1,0 +1,35 @@
+======================================================================
+TARGET VARIABLE CLASS BALANCE REPORT
+======================================================================
+
+--- target_binary ---
+  In_Range             count= 15214   pct=96.71%
+  Out_of_Range         count=   517   pct=3.29%
+
+--- target_ada3 ---
+  Target Range         count= 15214   pct=96.71%
+  Hyperglycemia        count=   517   pct=3.29%
+
+--- target_5class ---
+  Target_Range         count= 15214   pct=96.71%
+  L1_Hyperglycemia     count=   517   pct=3.29%
+
+--- target_trend ---
+  Falling              count=  3363   pct=21.38%
+  Falling Rapidly      count=  3152   pct=20.04%
+  Rising               count=  3151   pct=20.03%
+  Rising Rapidly       count=  3126   pct=19.87%
+  Stable               count=  2929   pct=18.62%
+  nan                  count=    10   pct=0.06%
+
+--- glucose_lead_1 (regression target) ---
+  non-null rows: 15721 / 15731
+  mean=112.69  std=30.31
+
+--- glucose_lead_3 (regression target) ---
+  non-null rows: 15701 / 15731
+  mean=112.69  std=30.32
+
+--- glucose_lead_6 (regression target) ---
+  non-null rows: 15671 / 15731
+  mean=112.69  std=30.35

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">Project overview</span>
+    <h1>About GlucoTrend</h1>
+    <p>
+        GlucoTrend applies machine learning to continuous glucose monitoring (CGM) data
+        to forecast future glucose readings and classify glucose-range risk, using the
+        GlucoBench benchmark dataset (10 patients, 15,731 timestamped readings).
+    </p>
+</section>
+
+<h2>Objectives</h2>
+<ul class="target-list">
+    <li><b>Forecast</b> the next CGM reading(s) from recent history and context (insulin, carbs, activity).</li>
+    <li><b>Classify</b> glucose-range risk (in-range vs. hyperglycemia) for early alerting.</li>
+    <li><b>Compare</b> five target-variable framings (regression, binary, 3-class, 5-class, trend) on the
+        same feature set to see which is best supported by this dataset.</li>
+</ul>
+
+<h2>Pipeline</h2>
+<p>
+    Dataset load &amp; missing-value audit &rarr; correlation/EDA &rarr;
+    <b>target variable engineering</b> &rarr; missing-value imputation &rarr;
+    categorical encoding (label / one-hot / ordinal / target / embedding) &rarr;
+    scaling &rarr; final preprocessing &rarr; modeling.
+</p>
+{% endblock %}

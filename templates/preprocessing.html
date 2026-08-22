@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Preprocessing{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">src/*_M1.py &middot; src/*_M2.py</span>
+    <h1>Preprocessing</h1>
+    <p>Every stage below reads from <code>dataset/target_engineered_M2.csv</code> (not the raw file)
+        so all five candidate targets stay available downstream.</p>
+</section>
+
+<ul class="target-list">
+    <li><b>target_variable_engineering_M2.py</b> &mdash; builds all 5 target candidates from raw data</li>
+    <li><b>clean_missing_imputer_M2.py</b> &mdash; deletion / mean / median / forward-fill / missing-indicator</li>
+    <li><b>clean_label_encode_M2.py</b> &mdash; label encoding for categorical predictors</li>
+    <li><b>clean_one_hot_encod_M2.py</b> &mdash; one-hot encoding</li>
+    <li><b>clean_ordinal_encod_M2.py</b> &mdash; ordinal encoding (exercise_intensity has a real order)</li>
+    <li><b>clean_target_encode_M2.py</b> &mdash; mean-target encoding</li>
+    <li><b>clean_embedding_encode_M2.py</b> &mdash; pandas-based embedding encoding</li>
+    <li><b>clean_minmax_stand_norma_M2.py</b> &mdash; standardization / min-max / L2 normalization</li>
+    <li><b>final_preprocess_M2.py</b> &mdash; assembles the modeling-ready dataset for one chosen target</li>
+</ul>
+{% endblock %}

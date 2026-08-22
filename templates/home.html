@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">CGM Benchmark &middot; 10 patients &middot; 15,731 readings</span>
+    <h1>GlucoTrend</h1>
+    <p>
+        A continuous glucose monitoring (CGM) machine learning project built on the
+        GlucoBench benchmark dataset - covering target variable design, preprocessing,
+        forecasting, and glucose-range classification.
+    </p>
+</section>
+
+<h2>Candidate target variables</h2>
+<ul class="target-list">
+    <li><b>Regression:</b> glucose_lead_1 / 3 / 6 &mdash; forecast the next CGM reading(s)</li>
+    <li><b>Binary:</b> target_binary &mdash; In Range vs Out of Range (70&ndash;180 mg/dL)</li>
+    <li><b>3-class (ADA):</b> target_ada3 &mdash; Hypoglycemia / Target Range / Hyperglycemia</li>
+    <li><b>5-class (clinical tiers):</b> target_5class &mdash; ATTD/ADA consensus severity levels</li>
+    <li><b>Trend:</b> target_trend &mdash; quantile-calibrated rate-of-change direction</li>
+</ul>
+
+<div class="card-grid">
+    <div class="card">
+        <h3>Dataset</h3>
+        <p>Raw CGM readings, insulin, meals, activity, and biosignals across 10 patients.</p>
+    </div>
+    <div class="card">
+        <h3>Preprocessing</h3>
+        <p>Missing-value handling, categorical encoding, scaling &mdash; mirrors the src/ pipeline.</p>
+    </div>
+    <div class="card">
+        <h3>Visualization</h3>
+        <p>Correlation heatmaps and feature-vs-target boxplots from outputs/.</p>
+    </div>
+    <div class="card">
+        <h3>Models</h3>
+        <p>Forecasting and classification models trained on the engineered targets.</p>
+    </div>
+</div>
+{% endblock %}

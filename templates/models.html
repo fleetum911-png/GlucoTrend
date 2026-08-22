@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Models{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">models/</span>
+    <h1>Models</h1>
+    <p>No models trained yet &mdash; the <code>models/</code> folder mirrors
+        placement_prediction's and is where trained model files (e.g. <code>.pkl</code>) go.</p>
+</section>
+
+<h2>Suggested next scripts (per target)</h2>
+<ul class="target-list">
+    <li><b>glucose_lead_1 (regression):</b> Linear_Regression_with_Metrics_M2.py style script</li>
+    <li><b>target_binary:</b> Logistic_Regression_Binary_Classifi_M2.py style script</li>
+    <li><b>target_ada3 / target_5class:</b> Multinomial_Logistic_Regre_for_Multiclas.py style script</li>
+    <li><b>target_trend:</b> multinomial classifier, same pattern, 5 balanced classes</li>
+</ul>
+{% endblock %}
