@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Models{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">src/*_M3.py &middot; trained on target_binary</span>
+    <h1>Machine Learning Models</h1>
+    <p class="lede">Real metrics, read live from each model's <code>metrics/*.csv</code> in <code>outputs/</code>.</p>
+</section>
+
+<table>
+    <tr>
+        <th>Model</th>
+        <th>Accuracy</th>
+        <th>Precision</th>
+        <th>Recall</th>
+        <th>F1 Score</th>
+    </tr>
+    {% for m in metrics %}
+    <tr>
+        <td><b>{{ m.name }}</b></td>
+        {% if m.available %}
+        <td>
+            <div class="metric-cell">
+                <div class="metric-bar-track"><div class="metric-bar-fill" style="width:{{ m.accuracy }}%"></div></div>
+                <span class="value">{{ m.accuracy }}%</span>
+            </div>
+        </td>
+        <td>{{ m.precision }}%</td>
+        <td>{{ m.recall }}%</td>
+        <td>{{ m.f1_score }}%</td>
+        {% else %}
+        <td colspan="4"><span class="badge badge-outline">Not run yet</span></td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="section-title"><h2>Model details</h2></div>
+<div class="card-grid">
+    <div class="card">
+        <h3>Decision Tree</h3>
+        <p>Single interpretable tree, depth-limited to 6. Best for explainability.</p>
+        <a href="{{ url_for('outputs_file', filename='Decision_Tree_Classifier_M3_Outputs/decision_tree/decision_tree_diagram.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View Tree Diagram</a>
+    </div>
+    <div class="card">
+        <h3>Random Forest</h3>
+        <p>100-tree bagged ensemble with square-root feature sampling.</p>
+        <a href="{{ url_for('outputs_file', filename='Random_Forest_Tree_M3_Outputs/random_forest_tree/random_forest_first_tree.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View First Tree</a>
+    </div>
+    <div class="card">
+        <h3>AdaBoost</h3>
+        <p>100 boosted depth-2 trees, learning rate 0.8.</p>
+        <a href="{{ url_for('outputs_file', filename='AdaBoost_Classifier_M3_Outputs/adaboost_base_tree/adaboost_base_tree.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View Base Tree</a>
+    </div>
+</div>
+
+<div class="info-note teal" style="margin-top:28px;">
+    All three exclude <code>glucose</code> from the feature set (it's what the target is derived
+    from) — see the leakage note at the top of each script. Change <code>TARGET_COLUMN</code> in
+    any of them to retrain on <code>target_ada3</code>, <code>target_5class</code>, or
+    <code>target_trend</code> instead.
+</div>
+{% endblock %}

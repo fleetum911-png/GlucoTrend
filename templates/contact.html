@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">GlucoTrend</span>
+    <h1>Contact</h1>
+    <p class="lede">For questions, feedback, or technical support, reach out to the project team.</p>
+</section>
+
+<div class="form-section" style="max-width:560px;">
+    <h3>Send a message</h3>
+    <div class="form-grid" style="grid-template-columns: 1fr;">
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Enter your name">
+        </div>
+        <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your email">
+        </div>
+        <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" rows="6" placeholder="Enter your message"></textarea>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary" style="margin-top:16px;">Submit</button>
+    <p class="stat-sub" style="margin-top:10px;">This form is a UI placeholder — wire it to an email service or database to make it functional.</p>
+</div>
+{% endblock %}

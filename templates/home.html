@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="home-hero">
+    <div>
+        <span class="eyebrow">CGM Benchmark &middot; GlucoBench Dataset</span>
+        <h1>Predict glucose risk before it happens.</h1>
+        <p class="lede">
+            GlucoTrend applies machine learning to continuous glucose monitoring (CGM) data —
+            forecasting future readings and classifying glucose-range risk across insulin,
+            meals, activity, and biosignal history for 10 patients.
+        </p>
+        <div class="cta-row">
+            <a href="{{ url_for('prediction') }}" class="btn btn-primary">Run a Prediction</a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">View Dashboard</a>
+        </div>
+    </div>
+    <div class="hero-panel">
+        <h3>Dataset at a glance</h3>
+        {% if stats %}
+        <div class="mini-stat"><span>Readings</span><b>{{ "{:,}".format(stats.rows) }}</b></div>
+        <div class="mini-stat"><span>Patients</span><b>{{ stats.patients }}</b></div>
+        <div class="mini-stat"><span>Raw Columns</span><b>{{ stats.columns }}</b></div>
+        <div class="mini-stat"><span>Glucose Range</span><b>{{ stats.glucose_min }}–{{ stats.glucose_max }} mg/dL</b></div>
+        <div class="mini-stat"><span>Mean Glucose</span><b>{{ stats.glucose_mean }} mg/dL</b></div>
+        {% else %}
+        <p class="stub-note">Dataset not found — check dataset/GlucoBench_benchmark_dataset_RAW.csv</p>
+        {% endif %}
+    </div>
+</section>
+
+<div class="section-title"><h2>Candidate target variables</h2></div>
+<ul class="target-list">
+    <li><b>Regression:</b> glucose_lead_1 / 3 / 6 &mdash; forecast the next CGM reading(s)</li>
+    <li><b>Binary:</b> target_binary &mdash; In Range vs Out of Range (70&ndash;180 mg/dL) &mdash; used by the live predictor</li>
+    <li><b>3-class (ADA):</b> target_ada3 &mdash; Hypoglycemia / Target Range / Hyperglycemia</li>
+    <li><b>5-class (clinical tiers):</b> target_5class &mdash; ATTD/ADA consensus severity levels</li>
+    <li><b>Trend:</b> target_trend &mdash; quantile-calibrated rate-of-change direction</li>
+</ul>
+
+<div class="section-title"><h2>What's inside</h2></div>
+<div class="card-grid">
+    <div class="card"><span class="icon">📊</span><h3>Dataset</h3><p>Raw CGM readings, insulin, meals, activity, and biosignals across 10 patients.</p></div>
+    <div class="card"><span class="icon">🧪</span><h3>Preprocessing</h3><p>Missing-value handling, categorical encoding, scaling &mdash; the full src/ pipeline.</p></div>
+    <div class="card"><span class="icon">📈</span><h3>Visualization</h3><p>Correlation heatmaps, feature boxplots, confusion matrices, cluster plots.</p></div>
+    <div class="card"><span class="icon">🌳</span><h3>Models</h3><p>Decision Tree, Random Forest, and AdaBoost classifiers, plus K-Means clustering.</p></div>
+    <div class="card"><span class="icon">🎯</span><h3>Prediction</h3><p>Submit a reading and get a live in-range / out-of-range classification.</p></div>
+    <div class="card"><span class="icon">📋</span><h3>Reports</h3><p>Downloadable metrics, classification reports, and class-balance analysis.</p></div>
+</div>
+{% endblock %}

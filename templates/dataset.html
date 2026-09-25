@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Dataset{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">dataset/GlucoBench_benchmark_dataset_RAW.csv</span>
+    <h1>Dataset</h1>
+    <p class="lede">Live stats computed directly from the raw CSV every time this page loads.</p>
+</section>
+
+{% if stats %}
+<div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">Total Readings</div><div class="stat-value">{{ "{:,}".format(stats.rows) }}</div></div>
+    <div class="stat-card"><div class="stat-label">Patients</div><div class="stat-value">{{ stats.patients }}</div></div>
+    <div class="stat-card"><div class="stat-label">Raw Columns</div><div class="stat-value">{{ stats.columns }}</div></div>
+    <div class="stat-card"><div class="stat-label">Missing Values</div><div class="stat-value">{{ "{:,}".format(stats.missing_values) }}</div><div class="stat-sub">mostly the empty "notes" column</div></div>
+    <div class="stat-card"><div class="stat-label">Duplicate Rows</div><div class="stat-value">{{ stats.duplicates }}</div></div>
+    <div class="stat-card"><div class="stat-label">Glucose Range</div><div class="stat-value">{{ stats.glucose_min }}–{{ stats.glucose_max }}</div><div class="stat-sub">mg/dL (mean {{ stats.glucose_mean }})</div></div>
+</div>
+
+<div class="section-title"><h2>Column groups</h2></div>
+<div class="card-grid">
+    <div class="card"><h3>Glucose &amp; history</h3><p>glucose, glucose_lag_1/3/6, glucose_roll_mean_1h, cgm_quality_flag</p></div>
+    <div class="card"><h3>Insulin &amp; meals</h3><p>insulin_bolus, insulin_basal, carbs, meal_type, carb_ratio, insulin_sensitivity</p></div>
+    <div class="card"><h3>Activity &amp; biosignals</h3><p>exercise_steps, exercise_intensity, heart_rate, skin_temp, gsr, sleep_stage</p></div>
+    <div class="card"><h3>Patient &amp; context</h3><p>hbA1c, age, sex, weight, stress_level, alcohol, medication_other, device_id, region</p></div>
+</div>
+
+<div class="section-title"><h2>Live preview (first 8 rows)</h2></div>
+<div class="preview-table-wrap">
+    {{ stats.preview | safe }}
+</div>
+
+<div class="section-title"><h2>Known data quirks</h2></div>
+<ul class="target-list">
+    <li>Glucose is clipped to <b>[{{ stats.glucose_min }}, {{ stats.glucose_max }}] mg/dL</b> &mdash; true hypoglycemia never occurs.</li>
+    <li><b>notes</b> column is 100% empty and is dropped early in the pipeline.</li>
+    <li>Sampling interval is mostly 5&ndash;10 minutes but irregular (5&ndash;45 min gaps occur).</li>
+</ul>
+{% else %}
+<div class="stub-note">Dataset not found at dataset/GlucoBench_benchmark_dataset_RAW.csv</div>
+{% endif %}
+{% endblock %}

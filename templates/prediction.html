@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Prediction{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">Live inference &middot; Decision Tree model</span>
+    <h1>Glucose Range Prediction</h1>
+    <p class="lede">
+        Fill in a CGM reading's context below and the trained Decision Tree pipeline
+        (<code>outputs/Decision_Tree_Classifier_M3_Outputs/model/decision_tree_model.pkl</code>)
+        will classify it as In Range or Out of Range in real time.
+    </p>
+</section>
+
+{% if not model_available %}
+<div class="stub-note">
+    Model file not found. Run <code>python src/Decision_Tree_Classifier_M3.py</code> first, then reload this page.
+</div>
+{% endif %}
+
+{% if result %}
+    {% if result.error %}
+    <div class="stub-note">{{ result.error }}</div>
+    {% else %}
+    <div class="result-panel {{ 'risk' if result.is_risk else 'safe' }}">
+        <div class="result-icon">{{ '⚠️' if result.is_risk else '✅' }}</div>
+        <div>
+            <span class="badge {{ 'badge-amber' if result.is_risk else 'badge-teal' }}">Prediction</span>
+            <h2>{{ result.label.replace('_', ' ') }}</h2>
+            {% if result.confidence %}
+            <p style="margin:0; color:var(--muted);">Model confidence: <b>{{ result.confidence }}%</b></p>
+            {% endif %}
+            {% if result.class_probs %}
+            <div class="result-probs">
+                {% for cls, prob in result.class_probs.items() %}
+                <div class="prob-item">{{ cls.replace('_', ' ') }}: <b>{{ prob }}%</b></div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+
+<form method="POST" action="{{ url_for('prediction') }}">
+    {% for section_name, fields in sections %}
+    <div class="form-section">
+        <h3>{{ section_name }}</h3>
+        <div class="form-grid">
+            {% for field in fields %}
+            <div class="field">
+                <label for="{{ field }}">{{ labels.get(field, field) }}</label>
+                {% if field in options %}
+                <select name="{{ field }}" id="{{ field }}">
+                    {% for opt in options[field] %}
+                    <option value="{{ opt }}" {{ 'selected' if values.get(field) == opt }}>{{ opt }}</option>
+                    {% endfor %}
+                </select>
+                {% else %}
+                {% set range = ranges.get(field) %}
+                <input type="number" name="{{ field }}" id="{{ field }}"
+                       value="{{ values.get(field) }}"
+                       {% if range %}min="{{ range[0] }}" max="{{ range[1] }}" step="{{ range[2] }}"{% endif %}>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary btn-block" {{ 'disabled' if not model_available }}>
+        Predict Glucose Range
+    </button>
+</form>
+{% endblock %}

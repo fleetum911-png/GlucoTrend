@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GlucoTrend{% endblock %} · GlucoTrend</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="bg-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="{{ url_for('home') }}">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 48 24" width="30" height="15">
+                        <polyline points="0,18 8,18 12,4 18,20 24,10 30,16 36,8 48,8"
+                                  fill="none" stroke="currentColor" stroke-width="3"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span>GlucoTrend</span>
+            </a>
+            <nav class="site-nav">
+                <a href="{{ url_for('home') }}" class="{{ 'active' if request.endpoint == 'home' }}">Home</a>
+                <a href="{{ url_for('about') }}" class="{{ 'active' if request.endpoint == 'about' }}">About</a>
+                <a href="{{ url_for('dataset') }}" class="{{ 'active' if request.endpoint == 'dataset' }}">Dataset</a>
+                <a href="{{ url_for('preprocessing') }}" class="{{ 'active' if request.endpoint == 'preprocessing' }}">Preprocessing</a>
+                <a href="{{ url_for('visualization') }}" class="{{ 'active' if request.endpoint == 'visualization' }}">Visualization</a>
+                <a href="{{ url_for('models') }}" class="{{ 'active' if request.endpoint == 'models' }}">Models</a>
+                <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a>
+                <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}">Reports</a>
+                <a href="{{ url_for('contact') }}" class="{{ 'active' if request.endpoint == 'contact' }}">Contact</a>
+            </nav>
+            <a href="{{ url_for('prediction') }}" class="btn btn-primary btn-nav">Predict</a>
+        </div>
+    </header>
+
+    <main class="page-wrap">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="brand footer-brand">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 48 24" width="26" height="13">
+                        <polyline points="0,18 8,18 12,4 18,20 24,10 30,16 36,8 48,8"
+                                  fill="none" stroke="currentColor" stroke-width="3"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span>GlucoTrend</span>
+            </div>
+            <p>CGM forecasting &amp; glucose-range classification &middot; built on the GlucoBench benchmark dataset</p>
+            <p class="footer-stack">Python &middot; Flask &middot; scikit-learn &middot; Pandas &middot; Matplotlib</p>
+        </div>
+    </footer>
+</body>
+</html>

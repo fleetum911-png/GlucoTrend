@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">outputs/</span>
+    <h1>Reports</h1>
+    <p class="lede">Every file below is listed live from disk — click to open or download.</p>
+</section>
+
+{% if reports %}
+<table>
+    <tr><th>Report</th><th>File</th><th>Size</th><th></th></tr>
+    {% for r in reports %}
+    <tr>
+        <td><b>{{ r.label }}</b></td>
+        <td><code>{{ r.path }}</code></td>
+        <td>{{ r.size_kb }} KB</td>
+        <td><a href="{{ url_for('outputs_file', filename=r.path) }}" class="btn btn-secondary" style="padding:6px 14px; font-size:0.82rem;" target="_blank">Open</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<div class="stub-note">
+    No reports found yet. Run <code>python main.py</code> to generate the target class-balance
+    report and each model's metrics/classification reports.
+</div>
+{% endif %}
+{% endblock %}

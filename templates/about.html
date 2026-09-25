@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">Project overview</span>
+    <h1>About GlucoTrend</h1>
+    <p class="lede">
+        GlucoTrend applies machine learning to continuous glucose monitoring (CGM) data
+        to forecast future glucose readings and classify glucose-range risk, using the
+        GlucoBench benchmark dataset (10 patients, 15,731 timestamped readings).
+    </p>
+</section>
+
+<div class="section-title"><h2>Objectives</h2></div>
+<ul class="target-list">
+    <li><b>Forecast</b> the next CGM reading(s) from recent history and context (insulin, carbs, activity).</li>
+    <li><b>Classify</b> glucose-range risk (in-range vs. hyperglycemia) for early alerting.</li>
+    <li><b>Compare</b> five target-variable framings (regression, binary, 3-class, 5-class, trend) on
+        the same feature set to see which is best supported by this dataset.</li>
+    <li><b>Cluster</b> patient/reading profiles with K-Means to surface behavior patterns beyond the labeled targets.</li>
+</ul>
+
+<div class="section-title"><h2>Pipeline</h2></div>
+<p>
+    Dataset load &amp; missing-value audit &rarr; correlation/EDA &rarr;
+    <b>target variable engineering</b> &rarr; missing-value imputation &rarr;
+    categorical encoding (label / one-hot / ordinal / target / embedding) &rarr;
+    scaling &rarr; final preprocessing &rarr; classification (Decision Tree, Random Forest,
+    AdaBoost) &rarr; clustering (K-Means / K-Means++).
+</p>
+
+<div class="section-title"><h2>Technologies used</h2></div>
+<div class="card-grid">
+    <div class="card"><h3>Python</h3><p>Core language for the entire pipeline.</p></div>
+    <div class="card"><h3>Pandas &amp; NumPy</h3><p>Data loading, cleaning, and feature engineering.</p></div>
+    <div class="card"><h3>Scikit-learn</h3><p>Preprocessing pipelines, classifiers, and clustering.</p></div>
+    <div class="card"><h3>Matplotlib &amp; Seaborn</h3><p>EDA, confusion matrices, and cluster visualizations.</p></div>
+    <div class="card"><h3>Flask</h3><p>This web application, serving live data and predictions.</p></div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Visualization{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">outputs/</span>
+    <h1>Visualization</h1>
+    <p class="lede">
+        Every image below is pulled live from the <code>outputs/</code> folder — nothing is
+        hardcoded. Run the corresponding <code>src/</code> script and refresh this page to
+        see new charts appear automatically.
+    </p>
+</section>
+
+{% if gallery %}
+    {% for section, images in gallery.items() %}
+    <div class="section-title"><h2>{{ section }}</h2><span class="hint">{{ images|length }} image(s)</span></div>
+    <div class="gallery-grid">
+        {% for image in images %}
+        <div class="gallery-item">
+            <img src="{{ url_for('outputs_file', filename=image.path) }}" alt="{{ image.name }}" loading="lazy">
+            <div class="caption">{{ image.name }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+{% else %}
+<div class="stub-note">
+    No output images found yet. Run <code>python main.py</code> to generate the EDA charts,
+    confusion matrices, feature-importance plots, and cluster visualizations.
+</div>
+{% endif %}
+{% endblock %}

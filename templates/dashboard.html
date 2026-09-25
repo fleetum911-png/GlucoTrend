@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">Live summary</span>
+    <h1>Dashboard</h1>
+    <p class="lede">Headline numbers pulled from the dataset and the trained models, every page load.</p>
+</section>
+
+{% if stats %}
+<div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">Total Readings</div><div class="stat-value">{{ "{:,}".format(stats.rows) }}</div></div>
+    <div class="stat-card"><div class="stat-label">Patients</div><div class="stat-value">{{ stats.patients }}</div></div>
+    {% if best_model %}
+    <div class="stat-card"><div class="stat-label">Best Model</div><div class="stat-value" style="font-size:1.3rem;">{{ best_model.name }}</div><div class="stat-sub">{{ best_model.accuracy }}% accuracy</div></div>
+    {% endif %}
+    {% if balance %}
+    <div class="stat-card"><div class="stat-label">Out-of-Range Rate</div><div class="stat-value">
+        {% for b in balance %}{% if b.label == 'Out_of_Range' %}{{ b.pct }}%{% endif %}{% endfor %}
+    </div><div class="stat-sub">of all readings</div></div>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if balance %}
+<div class="section-title"><h2>target_binary class balance</h2></div>
+<table>
+    <tr><th>Class</th><th>Count</th><th>Share</th></tr>
+    {% for b in balance %}
+    <tr>
+        <td><b>{{ b.label.replace('_', ' ') }}</b></td>
+        <td>{{ "{:,}".format(b.count) }}</td>
+        <td>
+            <div class="metric-cell">
+                <div class="metric-bar-track"><div class="metric-bar-fill" style="width:{{ b.pct }}%"></div></div>
+                <span class="value">{{ b.pct }}%</span>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<div class="section-title"><h2>Model comparison</h2></div>
+<div class="card-grid">
+    {% for m in metrics %}
+    <div class="card">
+        <h3>{{ m.name }}</h3>
+        {% if m.available %}
+        <p>Accuracy: <b>{{ m.accuracy }}%</b> &middot; F1: <b>{{ m.f1_score }}%</b></p>
+        {% else %}
+        <p><span class="badge badge-outline">Not run yet</span></p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="cta-row" style="margin-top:28px;">
+    <a href="{{ url_for('prediction') }}" class="btn btn-primary">Run a Prediction</a>
+    <a href="{{ url_for('visualization') }}" class="btn btn-secondary">View All Charts</a>
+</div>
+{% endblock %}

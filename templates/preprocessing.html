@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Preprocessing{% endblock %}
+{% block content %}
+<section class="hero">
+    <span class="eyebrow">src/*_M1.py &middot; src/*_M2.py</span>
+    <h1>Preprocessing Pipeline</h1>
+    <p class="lede">
+        Every stage below reads from <code>dataset/target_engineered_M2.csv</code> (not the raw file)
+        so all five candidate targets stay available downstream. Status reflects whether each
+        stage's output file currently exists on disk.
+    </p>
+</section>
+
+<div class="pipeline">
+    {% for step in pipeline %}
+    <div class="pipeline-step {{ 'done' if step.done }}">
+        <div class="step-num">{{ loop.index }}</div>
+        <div class="step-body">
+            <div class="step-script">{{ step.script }}</div>
+            <div class="step-desc">{{ step.description }}</div>
+        </div>
+        <div class="step-status">
+            {% if step.done %}
+            <span class="badge badge-teal">✓ Done</span>
+            {% else %}
+            <span class="badge badge-outline">Not run</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="info-note teal" style="margin-top:24px;">
+    Run <code>python main.py</code> from the project root to execute every stage in order.
+</div>
+{% endblock %}
