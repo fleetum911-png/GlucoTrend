@@ -2,62 +2,104 @@
 {% block title %}Models{% endblock %}
 {% block content %}
 <section class="hero">
-    <span class="eyebrow">src/*_M3.py &middot; trained on target_binary</span>
-    <h1>Machine Learning Models</h1>
-    <p class="lede">Real metrics, read live from each model's <code>metrics/*.csv</code> in <code>outputs/</code>.</p>
+    <span class="eyebrow">Module 3 &middot; glucose range classification</span>
+    <h1>Compare the Models</h1>
+    <p class="lede">Compare Decision Tree, Random Forest, and AdaBoost using the saved evaluation metrics. Choose a metric to reorder and compare the available models.</p>
 </section>
 
-<table>
-    <tr>
-        <th>Model</th>
-        <th>Accuracy</th>
-        <th>Precision</th>
-        <th>Recall</th>
-        <th>F1 Score</th>
-    </tr>
+{% set available_models = metrics|selectattr('available')|list %}
+{% if available_models %}
+<section class="comparison-panel" aria-labelledby="comparison-heading">
+    <div class="comparison-heading">
+        <div>
+            <h2 id="comparison-heading">Metric comparison</h2>
+            <p>Bars show each model's score as a percentage. Select a metric to compare.</p>
+        </div>
+        <label class="metric-picker">Compare by
+            <select id="metric-selector" aria-label="Metric to compare">
+                <option value="accuracy">Accuracy</option>
+                <option value="precision">Precision</option>
+                <option value="recall">Recall</option>
+                <option value="f1_score">F1 Score</option>
+            </select>
+        </label>
+    </div>
+    <div id="comparison-chart" class="comparison-chart" aria-live="polite">
+        {% for m in available_models %}
+        <div class="comparison-row" data-model="{{ m.name }}" data-accuracy="{{ m.accuracy }}" data-precision="{{ m.precision }}" data-recall="{{ m.recall }}" data-f1_score="{{ m.f1_score }}">
+            <div class="comparison-label"><span class="comparison-rank"></span><b>{{ m.name }}</b><span class="comparison-score">{{ m.accuracy }}%</span></div>
+            <div class="metric-bar-track"><div class="metric-bar-fill comparison-fill" style="width:{{ m.accuracy }}%"></div></div>
+        </div>
+        {% endfor %}
+    </div>
+    <p class="comparison-winner" id="comparison-winner"></p>
+</section>
+
+<div class="section-title"><h2>Evaluation metrics</h2><span class="hint">Read from outputs/*/metrics/*.csv</span></div>
+<div class="table-scroll">
+<table id="model-metrics-table">
+    <thead><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1 Score</th></tr></thead>
+    <tbody>
     {% for m in metrics %}
-    <tr>
+    <tr data-model-row="{{ m.name }}">
         <td><b>{{ m.name }}</b></td>
         {% if m.available %}
-        <td>
-            <div class="metric-cell">
-                <div class="metric-bar-track"><div class="metric-bar-fill" style="width:{{ m.accuracy }}%"></div></div>
-                <span class="value">{{ m.accuracy }}%</span>
-            </div>
-        </td>
-        <td>{{ m.precision }}%</td>
-        <td>{{ m.recall }}%</td>
-        <td>{{ m.f1_score }}%</td>
+        <td>{{ m.accuracy }}%</td><td>{{ m.precision }}%</td><td>{{ m.recall }}%</td><td>{{ m.f1_score }}%</td>
         {% else %}
         <td colspan="4"><span class="badge badge-outline">Not run yet</span></td>
         {% endif %}
     </tr>
     {% endfor %}
+    </tbody>
 </table>
+</div>
+{% else %}
+<div class="info-note">No classifier metrics are available yet. Run the Module 3 scripts to create comparison results.</div>
+{% endif %}
 
 <div class="section-title"><h2>Model details</h2></div>
 <div class="card-grid">
-    <div class="card">
-        <h3>Decision Tree</h3>
-        <p>Single interpretable tree, depth-limited to 6. Best for explainability.</p>
-        <a href="{{ url_for('outputs_file', filename='Decision_Tree_Classifier_M3_Outputs/decision_tree/decision_tree_diagram.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View Tree Diagram</a>
-    </div>
-    <div class="card">
-        <h3>Random Forest</h3>
-        <p>100-tree bagged ensemble with square-root feature sampling.</p>
-        <a href="{{ url_for('outputs_file', filename='Random_Forest_Tree_M3_Outputs/random_forest_tree/random_forest_first_tree.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View First Tree</a>
-    </div>
-    <div class="card">
-        <h3>AdaBoost</h3>
-        <p>100 boosted depth-2 trees, learning rate 0.8.</p>
-        <a href="{{ url_for('outputs_file', filename='AdaBoost_Classifier_M3_Outputs/adaboost_base_tree/adaboost_base_tree.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View Base Tree</a>
-    </div>
+    <details class="card model-detail"><summary><h3>Decision Tree</h3><span class="detail-toggle">View details</span></summary><p>Single interpretable tree. Useful for tracing decisions through feature splits.</p><a href="{{ url_for('outputs_file', filename='Decision_Tree_Classifier_M3_Outputs/decision_tree/decision_tree_diagram.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View Tree Diagram</a></details>
+    <details class="card model-detail"><summary><h3>Random Forest</h3><span class="detail-toggle">View details</span></summary><p>Bagged decision trees with feature subsampling to combine multiple views of the data.</p><a href="{{ url_for('outputs_file', filename='Random_Forest_Tree_M3_Outputs/random_forest_tree/random_forest_first_tree.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View First Tree</a></details>
+    <details class="card model-detail"><summary><h3>AdaBoost</h3><span class="detail-toggle">View details</span></summary><p>Boosted shallow trees, where each round focuses more on examples missed by earlier rounds.</p><a href="{{ url_for('outputs_file', filename='AdaBoost_Classifier_M3_Outputs/adaboost_base_tree/adaboost_base_tree.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View Base Tree</a></details>
+</div>
+
+<div class="section-title"><h2>Other methods in the project</h2><span class="hint">Modules 4–5 · scripts and artifacts in the library</span></div>
+<div class="method-grid">
+    <article class="method-card"><span>M4 · PARTITIONING</span><h3>K-Means &amp; K-Means++</h3><p>Assign readings to a chosen number of clusters. K-Means++ spreads initial centers to improve initialization.</p><a href="{{ url_for('library') }}#generated-outputs">Browse cluster outputs →</a></article>
+    <article class="method-card"><span>M4 · DENSITY</span><h3>DBSCAN</h3><p>Finds dense groups and marks isolated points as noise, without requiring a fixed cluster count.</p><a href="{{ url_for('library') }}#generated-outputs">Browse DBSCAN outputs →</a></article>
+    <article class="method-card"><span>M4 · HIERARCHICAL</span><h3>Agglomerative &amp; divisive</h3><p>Explore nested grouping by building clusters bottom-up or splitting them into smaller groups.</p><a href="{{ url_for('library') }}#generated-outputs">Browse hierarchy outputs →</a></article>
+    <article class="method-card"><span>M4 · DIMENSION REDUCTION</span><h3>PCA &amp; t-SNE</h3><p>Create lower-dimensional representations for visual inspection of structure and variance.</p><a href="{{ url_for('library') }}#generated-outputs">Browse embeddings →</a></article>
+    <article class="method-card"><span>M4 · OUTLIERS</span><h3>Isolation Forest</h3><p>Identify observations that are easier to isolate from the rest of the feature space.</p><a href="{{ url_for('library') }}#generated-outputs">Browse anomaly results →</a></article>
+    <article class="method-card"><span>M5 · VALIDATION</span><h3>Cross-validation</h3><p>Evaluate classifiers across multiple folds to see how results vary across data partitions.</p><a href="{{ url_for('library') }}#generated-outputs">Browse validation reports →</a></article>
 </div>
 
 <div class="info-note teal" style="margin-top:28px;">
-    All three exclude <code>glucose</code> from the feature set (it's what the target is derived
-    from) — see the leakage note at the top of each script. Change <code>TARGET_COLUMN</code> in
-    any of them to retrain on <code>target_ada3</code>, <code>target_5class</code>, or
-    <code>target_trend</code> instead.
+    Scores are the saved holdout evaluation results. The binary target is strongly imbalanced, so accuracy alone can hide errors on the less common glucose class; review precision, recall, and F1 together. These model scores are research outputs, not clinical guidance.
 </div>
+
+<script>
+(() => {
+    const selector = document.getElementById("metric-selector");
+    const chart = document.getElementById("comparison-chart");
+    if (!selector || !chart) return;
+    const labels = { accuracy: "Accuracy", precision: "Precision", recall: "Recall", f1_score: "F1 Score" };
+    const rows = [...chart.querySelectorAll(".comparison-row")];
+    const winner = document.getElementById("comparison-winner");
+    function updateComparison() {
+        const metric = selector.value;
+        const sorted = [...rows].sort((a, b) => Number(b.dataset[metric]) - Number(a.dataset[metric]));
+        sorted.forEach((row, index) => {
+            const score = Number(row.dataset[metric]);
+            row.querySelector(".comparison-score").textContent = `${score.toFixed(2)}%`;
+            row.querySelector(".comparison-fill").style.width = `${Math.max(0, Math.min(score, 100))}%`;
+            row.querySelector(".comparison-rank").textContent = `#${index + 1}`;
+            chart.appendChild(row);
+        });
+        winner.textContent = `${sorted[0].dataset.model} leads on ${labels[metric]} (${Number(sorted[0].dataset[metric]).toFixed(2)}%).`;
+    }
+    selector.addEventListener("change", updateComparison);
+    updateComparison();
+})();
+</script>
 {% endblock %}

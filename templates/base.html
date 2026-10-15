@@ -31,6 +31,7 @@
                 <a href="{{ url_for('preprocessing') }}" class="{{ 'active' if request.endpoint == 'preprocessing' }}">Preprocessing</a>
                 <a href="{{ url_for('visualization') }}" class="{{ 'active' if request.endpoint == 'visualization' }}">Visualization</a>
                 <a href="{{ url_for('models') }}" class="{{ 'active' if request.endpoint == 'models' }}">Models</a>
+                <a href="{{ url_for('library') }}" class="{{ 'active' if request.endpoint == 'library' }}">Code &amp; Outputs</a>
                 <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a>
                 <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}">Reports</a>
                 <a href="{{ url_for('contact') }}" class="{{ 'active' if request.endpoint == 'contact' }}">Contact</a>
@@ -59,5 +60,15 @@
             <p class="footer-stack">Python &middot; Flask &middot; scikit-learn &middot; Pandas &middot; Matplotlib</p>
         </div>
     </footer>
+    <script>
+    (() => {
+        const targets = document.querySelectorAll('.hero, .stat-grid, .card-grid, .pipeline-step, .comparison-panel, .gallery-grid, .form-section, .target-list, .table-scroll, .home-section, .journey-band');
+        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+            if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
+        }), { threshold: 0.08 });
+        targets.forEach((target) => { target.classList.add('reveal-on-scroll'); observer.observe(target); });
+    })();
+    </script>
 </body>
 </html>

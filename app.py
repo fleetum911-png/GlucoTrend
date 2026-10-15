@@ -16,7 +16,7 @@ import os
 import pickle
 
 import pandas as pd
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, abort, render_template, request, send_from_directory
 
 app = Flask(__name__)
 
@@ -162,35 +162,57 @@ def get_model_metrics():
 
 
 def list_images(*subpath_parts):
-    """Return web-servable relative paths for every PNG under outputs/<subpath>."""
+    """Return web-servable relative paths for PNG files under outputs."""
     folder = os.path.join(OUTPUTS_DIR, *subpath_parts)
     if not os.path.isdir(folder):
         return []
     images = []
-    for fname in sorted(os.listdir(folder)):
-        if fname.lower().endswith(".png"):
-            rel_path = "/".join(subpath_parts + (fname,))
-            images.append({"path": rel_path, "name": fname.replace("_", " ").replace(".png", "").title()})
+    for root, dirs, files in os.walk(folder):
+        dirs.sort()
+        for fname in sorted(files):
+            if fname.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".svg")):
+                rel_path = os.path.relpath(os.path.join(root, fname), OUTPUTS_DIR).replace(os.sep, "/")
+                images.append({
+                    "path": rel_path,
+                    "group": os.path.dirname(rel_path).replace("_", " ").replace("/", " / "),
+                    "name": fname.rsplit(".", 1)[0].replace("_", " ").title(),
+                })
     return images
 
 
 def list_reports():
     reports = []
-    candidates = [
-        ("Target Variable Class Balance", ["Target_Variable_Analysis_M2", "target_class_balance_report.txt"]),
-        ("Decision Tree - Metrics", ["Decision_Tree_Classifier_M3_Outputs", "metrics", "decision_tree_metrics.csv"]),
-        ("Decision Tree - Classification Report", ["Decision_Tree_Classifier_M3_Outputs", "metrics", "classification_report.csv"]),
-        ("Random Forest - Metrics", ["Random_Forest_Tree_M3_Outputs", "metrics", "random_forest_metrics.csv"]),
-        ("Random Forest - Classification Report", ["Random_Forest_Tree_M3_Outputs", "metrics", "classification_report.csv"]),
-        ("AdaBoost - Metrics", ["AdaBoost_Classifier_M3_Outputs", "metrics", "adaboost_metrics.csv"]),
-        ("AdaBoost - Classification Report", ["AdaBoost_Classifier_M3_Outputs", "metrics", "classification_report.csv"]),
-        ("K-Means - Cluster Metrics", ["K_Means_K++Means_Elbow_Silhoute_M4_Outputs", "KMeans", "kmeans_metrics.csv"]),
-    ]
-    for label, parts in candidates:
-        full_path = os.path.join(OUTPUTS_DIR, *parts)
-        if os.path.exists(full_path):
-            reports.append({"label": label, "path": "/".join(parts), "size_kb": round(os.path.getsize(full_path) / 1024, 1)})
+    if not os.path.isdir(OUTPUTS_DIR):
+        return reports
+    for root, dirs, files in os.walk(OUTPUTS_DIR):
+        dirs.sort()
+        for filename in sorted(files):
+            full_path = os.path.join(root, filename)
+            rel_path = os.path.relpath(full_path, OUTPUTS_DIR).replace(os.sep, "/")
+            reports.append({
+                "label": filename.rsplit(".", 1)[0].replace("_", " ").title(),
+                "path": rel_path,
+                "kind": filename.rsplit(".", 1)[-1].upper() if "." in filename else "FILE",
+                "size_kb": round(os.path.getsize(full_path) / 1024, 1),
+            })
     return reports
+
+
+def list_source_files():
+    """List application entry points and every project Python source file."""
+    files = []
+    for name in ("app.py", "main.py"):
+        full_path = os.path.join(BASE_DIR, name)
+        if os.path.isfile(full_path):
+            files.append({"path": name, "name": name, "size_kb": round(os.path.getsize(full_path) / 1024, 1)})
+    for root, dirs, names in os.walk(os.path.join(BASE_DIR, "src")):
+        dirs.sort()
+        for name in sorted(names):
+            if name.endswith(".py"):
+                full_path = os.path.join(root, name)
+                rel_path = os.path.relpath(full_path, BASE_DIR).replace(os.sep, "/")
+                files.append({"path": rel_path, "name": name, "size_kb": round(os.path.getsize(full_path) / 1024, 1)})
+    return files
 
 
 # ================================================================
@@ -204,7 +226,7 @@ def home():
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    return render_template("about.html", stats=get_dataset_stats())
 
 
 @app.route("/dataset")
@@ -249,34 +271,9 @@ def preprocessing():
 
 @app.route("/visualization")
 def visualization():
-    gallery = {
-        "Exploratory Data Analysis": list_images("Boxplots_correlation"),
-        "Decision Tree": (
-            list_images("Decision_Tree_Classifier_M3_Outputs", "confusion_matrix")
-            + list_images("Decision_Tree_Classifier_M3_Outputs", "charts")
-            + list_images("Decision_Tree_Classifier_M3_Outputs", "feature_importance")
-            + list_images("Decision_Tree_Classifier_M3_Outputs", "decision_tree")
-        ),
-        "Random Forest": (
-            list_images("Random_Forest_Tree_M3_Outputs", "confusion_matrix")
-            + list_images("Random_Forest_Tree_M3_Outputs", "charts")
-            + list_images("Random_Forest_Tree_M3_Outputs", "feature_importance")
-            + list_images("Random_Forest_Tree_M3_Outputs", "random_forest_tree")
-        ),
-        "AdaBoost": (
-            list_images("AdaBoost_Classifier_M3_Outputs", "confusion_matrix")
-            + list_images("AdaBoost_Classifier_M3_Outputs", "charts")
-            + list_images("AdaBoost_Classifier_M3_Outputs", "feature_importance")
-            + list_images("AdaBoost_Classifier_M3_Outputs", "adaboost_base_tree")
-        ),
-        "K-Means Clustering": (
-            list_images("K_Means_K++Means_Elbow_Silhoute_M4_Outputs", "Elbow")
-            + list_images("K_Means_K++Means_Elbow_Silhoute_M4_Outputs", "Silhouette")
-            + list_images("K_Means_K++Means_Elbow_Silhoute_M4_Outputs", "KMeans")
-            + list_images("K_Means_K++Means_Elbow_Silhoute_M4_Outputs", "KMeansPlusPlus")
-        ),
-    }
-    gallery = {section: images for section, images in gallery.items() if images}
+    gallery = {}
+    for image in list_images():
+        gallery.setdefault(image["group"] or "Project outputs", []).append(image)
     return render_template("visualization.html", gallery=gallery)
 
 
@@ -351,6 +348,11 @@ def reports():
     return render_template("reports.html", reports=list_reports())
 
 
+@app.route("/library")
+def library():
+    return render_template("library.html", source_files=list_source_files(), output_files=list_reports())
+
+
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
@@ -358,8 +360,29 @@ def contact():
 
 @app.route("/outputs/<path:filename>")
 def outputs_file(filename):
-    """Serve images/CSVs/txt reports straight from the outputs/ folder."""
-    return send_from_directory(OUTPUTS_DIR, filename)
+    """Serve generated artifacts; keep serialized model files as downloads."""
+    return send_from_directory(OUTPUTS_DIR, filename, as_attachment=filename.lower().endswith((".pkl", ".pickle", ".joblib")))
+
+
+@app.route("/source/<path:filename>")
+def source_file(filename):
+    """Display a project source file in the browser."""
+    if not (filename in {"app.py", "main.py"} or (filename.startswith("src/") and filename.endswith(".py"))):
+        abort(404)
+    source_path = os.path.join(BASE_DIR, filename)
+    if not os.path.isfile(source_path):
+        abort(404)
+    with open(source_path, encoding="utf-8") as source_file_handle:
+        source_code = source_file_handle.read()
+    return render_template("source.html", filename=filename, source_code=source_code)
+
+
+@app.route("/source-download/<path:filename>")
+def source_download(filename):
+    """Download a project Python source file."""
+    if not (filename in {"app.py", "main.py"} or (filename.startswith("src/") and filename.endswith(".py"))):
+        abort(404)
+    return send_from_directory(BASE_DIR, filename, as_attachment=True)
 
 
 if __name__ == "__main__":

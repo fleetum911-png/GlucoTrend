@@ -2,49 +2,68 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <section class="home-hero">
-    <div>
-        <span class="eyebrow">CGM Benchmark &middot; GlucoBench Dataset</span>
-        <h1>Predict glucose risk before it happens.</h1>
-        <p class="lede">
-            GlucoTrend applies machine learning to continuous glucose monitoring (CGM) data —
-            forecasting future readings and classifying glucose-range risk across insulin,
-            meals, activity, and biosignal history for 10 patients.
-        </p>
+    <div class="hero-copy">
+        <span class="eyebrow"><span class="live-dot"></span> A machine learning study of CGM data</span>
+        <h1>See the signal<br><em>behind glucose.</em></h1>
+        <p class="lede">GlucoTrend explores how readings, meals, insulin, activity, and biosignals can help describe glucose patterns. Browse the dataset, compare models, and try a sample classification.</p>
         <div class="cta-row">
-            <a href="{{ url_for('prediction') }}" class="btn btn-primary">Run a Prediction</a>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">View Dashboard</a>
+            <a href="{{ url_for('prediction') }}" class="btn btn-primary">Explore a prediction <span aria-hidden="true">↗</span></a>
+            <a href="{{ url_for('models') }}" class="text-link">See how the models compare <span aria-hidden="true">→</span></a>
         </div>
+        <div class="hero-caption"><span class="caption-rule"></span><span>GlucoBench benchmark · 10 participants · research prototype</span></div>
     </div>
-    <div class="hero-panel">
-        <h3>Dataset at a glance</h3>
-        {% if stats %}
-        <div class="mini-stat"><span>Readings</span><b>{{ "{:,}".format(stats.rows) }}</b></div>
-        <div class="mini-stat"><span>Patients</span><b>{{ stats.patients }}</b></div>
-        <div class="mini-stat"><span>Raw Columns</span><b>{{ stats.columns }}</b></div>
-        <div class="mini-stat"><span>Glucose Range</span><b>{{ stats.glucose_min }}–{{ stats.glucose_max }} mg/dL</b></div>
-        <div class="mini-stat"><span>Mean Glucose</span><b>{{ stats.glucose_mean }} mg/dL</b></div>
-        {% else %}
-        <p class="stub-note">Dataset not found — check dataset/GlucoBench_benchmark_dataset_RAW.csv</p>
-        {% endif %}
+    <div class="signal-card" aria-label="Illustrative glucose trend chart">
+        <div class="signal-topline"><div><span class="signal-kicker">READING WINDOW</span><h2>A day in the signal</h2></div><span class="signal-tag">Illustrative</span></div>
+        <div class="signal-chart">
+            <div class="range-band"><span>Target range</span></div>
+            <div class="chart-label label-high">180</div><div class="chart-label label-low">70</div>
+            <svg viewBox="0 0 560 220" role="img" aria-label="Illustrative CGM line moving through and above the target range" preserveAspectRatio="none">
+                <defs><linearGradient id="signalFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d59250" stop-opacity=".2"/><stop offset="1" stop-color="#d59250" stop-opacity="0"/></linearGradient></defs>
+                <path class="signal-area" d="M0 144 C28 141 35 124 58 129 S92 151 112 137 S144 97 169 108 S202 137 226 127 S256 93 280 101 S310 127 334 111 S365 58 388 69 S421 108 444 95 S477 82 501 91 S536 117 560 82 L560 220 L0 220Z"/>
+                <path class="signal-line" d="M0 144 C28 141 35 124 58 129 S92 151 112 137 S144 97 169 108 S202 137 226 127 S256 93 280 101 S310 127 334 111 S365 58 388 69 S421 108 444 95 S477 82 501 91 S536 117 560 82"/>
+                <circle class="signal-point" cx="388" cy="69" r="5"/><circle class="signal-point-halo" cx="388" cy="69" r="12"/>
+            </svg>
+            <div class="chart-times"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+        </div>
+        <div class="signal-legend"><span><i></i> Example CGM trace</span><span>70–180 mg/dL reference band</span></div>
+        <p class="signal-note">A visual guide only — not a participant record or clinical recommendation.</p>
     </div>
 </section>
 
-<div class="section-title"><h2>Candidate target variables</h2></div>
-<ul class="target-list">
-    <li><b>Regression:</b> glucose_lead_1 / 3 / 6 &mdash; forecast the next CGM reading(s)</li>
-    <li><b>Binary:</b> target_binary &mdash; In Range vs Out of Range (70&ndash;180 mg/dL) &mdash; used by the live predictor</li>
-    <li><b>3-class (ADA):</b> target_ada3 &mdash; Hypoglycemia / Target Range / Hyperglycemia</li>
-    <li><b>5-class (clinical tiers):</b> target_5class &mdash; ATTD/ADA consensus severity levels</li>
-    <li><b>Trend:</b> target_trend &mdash; quantile-calibrated rate-of-change direction</li>
-</ul>
+<section class="home-facts" aria-label="Dataset overview">
+    {% if stats %}
+    <div class="fact"><span class="fact-value">{{ "{:,}".format(stats.rows) }}</span><span class="fact-label">timestamped readings</span></div>
+    <div class="fact"><span class="fact-value">{{ stats.patients }}</span><span class="fact-label">participants</span></div>
+    <div class="fact"><span class="fact-value">{{ stats.columns }}</span><span class="fact-label">raw variables</span></div>
+    <div class="fact fact-range"><span class="fact-value">{{ stats.glucose_min }}–{{ stats.glucose_max }}</span><span class="fact-label">observed mg/dL</span></div>
+    {% else %}
+    <div class="fact fact-missing"><span class="fact-value">Dataset unavailable</span><span class="fact-label">Check dataset/GlucoBench_benchmark_dataset_RAW.csv</span></div>
+    {% endif %}
+    <a class="fact-link" href="{{ url_for('dataset') }}">Explore dataset <span>↗</span></a>
+</section>
 
-<div class="section-title"><h2>What's inside</h2></div>
-<div class="card-grid">
-    <div class="card"><span class="icon">📊</span><h3>Dataset</h3><p>Raw CGM readings, insulin, meals, activity, and biosignals across 10 patients.</p></div>
-    <div class="card"><span class="icon">🧪</span><h3>Preprocessing</h3><p>Missing-value handling, categorical encoding, scaling &mdash; the full src/ pipeline.</p></div>
-    <div class="card"><span class="icon">📈</span><h3>Visualization</h3><p>Correlation heatmaps, feature boxplots, confusion matrices, cluster plots.</p></div>
-    <div class="card"><span class="icon">🌳</span><h3>Models</h3><p>Decision Tree, Random Forest, and AdaBoost classifiers, plus K-Means clustering.</p></div>
-    <div class="card"><span class="icon">🎯</span><h3>Prediction</h3><p>Submit a reading and get a live in-range / out-of-range classification.</p></div>
-    <div class="card"><span class="icon">📋</span><h3>Reports</h3><p>Downloadable metrics, classification reports, and class-balance analysis.</p></div>
-</div>
+<section class="home-section">
+    <div class="section-intro"><div><span class="eyebrow">The modeling work</span><h2>Three ways to learn<br>from the same signal.</h2></div><p>Each classifier offers a different balance of clarity and flexibility. Their saved results are available on the Models page, alongside precision, recall, and F1.</p></div>
+    <div class="model-preview-grid">
+        <article class="model-preview model-tree"><div class="model-index">01 <span>INTERPRETABLE</span></div><h3>Decision Tree</h3><p>A sequence of feature-based splits that can be followed from input to output. A useful baseline when tracing model decisions matters.</p><div class="tree-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><a href="{{ url_for('models') }}">Inspect the tree <span>→</span></a></article>
+        <article class="model-preview model-forest"><div class="model-index">02 <span>ENSEMBLE</span></div><h3>Random Forest</h3><p>Combines many trees trained on varied samples and feature subsets. Aggregation can make predictions less sensitive to one tree.</p><div class="forest-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><a href="{{ url_for('models') }}">Explore the ensemble <span>→</span></a></article>
+        <article class="model-preview model-boost"><div class="model-index">03 <span>SEQUENTIAL</span></div><h3>AdaBoost</h3><p>Builds a sequence of small trees, increasing focus on observations earlier rounds classified poorly.</p><div class="boost-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><a href="{{ url_for('models') }}">See evaluation metrics <span>→</span></a></article>
+    </div>
+    <div class="model-footnote"><span class="footnote-symbol">i</span><p>These are educational model comparisons on a small benchmark dataset. Scores are not clinical validation, and accuracy alone may conceal errors on less common classes.</p></div>
+</section>
+
+<section class="home-section target-section">
+    <div class="section-intro"><div><span class="eyebrow">Targets &amp; questions</span><h2>Different targets,<br>different questions.</h2></div><p>The project engineers multiple outcomes to explore both future readings and present glucose state. The live demo uses the binary in-range classification.</p></div>
+    <div class="target-grid">
+        <article><span class="target-number">01</span><div><h3>Forecast</h3><p><code>glucose_lead_1 / 3 / 6</code> · Estimate future readings at successive steps.</p></div><span class="target-arrow">↗</span></article>
+        <article><span class="target-number">02</span><div><h3>Range classification</h3><p><code>target_binary</code> · In range or out of range, using 70–180 mg/dL.</p></div><span class="target-arrow">↗</span></article>
+        <article><span class="target-number">03</span><div><h3>Clinical tiers</h3><p><code>target_ada3</code> and <code>target_5class</code> · Group readings into severity bands.</p></div><span class="target-arrow">↗</span></article>
+        <article><span class="target-number">04</span><div><h3>Direction of change</h3><p><code>target_trend</code> · Describe glucose movement using calibrated rate-of-change bins.</p></div><span class="target-arrow">↗</span></article>
+    </div>
+</section>
+
+<section class="journey-band">
+    <div><span class="eyebrow">From raw data to review</span><h2>Follow the full workflow.</h2><p>Inspect data quality, preprocessing, visual analyses, model metrics, and downloadable reports.</p></div>
+    <div class="journey-links"><a href="{{ url_for('preprocessing') }}"><span>01</span> Preprocessing <b>↗</b></a><a href="{{ url_for('visualization') }}"><span>02</span> Visualizations <b>↗</b></a><a href="{{ url_for('reports') }}"><span>03</span> Reports <b>↗</b></a></div>
+</section>
 {% endblock %}

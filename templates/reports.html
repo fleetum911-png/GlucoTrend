@@ -4,21 +4,38 @@
 <section class="hero">
     <span class="eyebrow">outputs/</span>
     <h1>Reports</h1>
-    <p class="lede">Every file below is listed live from disk — click to open or download.</p>
+    <p class="lede">Every generated file under <code>outputs/</code> is listed here, from plots and CSV reports to prediction data and serialized model artifacts.</p>
 </section>
 
 {% if reports %}
-<table>
-    <tr><th>Report</th><th>File</th><th>Size</th><th></th></tr>
+<div class="library-summary"><div><b>{{ reports|length }}</b><span>generated files</span></div><p>Browse source scripts alongside these artifacts in the <a href="{{ url_for('library') }}">Code &amp; Outputs library →</a></p></div>
+<label class="library-search"><span aria-hidden="true">⌕</span><input type="search" id="report-search" placeholder="Search all output files…" aria-label="Search reports and outputs"></label>
+<table id="reports-table">
+    <thead><tr><th>Artifact</th><th>File</th><th>Type</th><th>Size</th><th></th></tr></thead>
+    <tbody>
     {% for r in reports %}
-    <tr>
+    <tr data-search="{{ (r.label ~ ' ' ~ r.path ~ ' ' ~ r.kind)|lower }}">
         <td><b>{{ r.label }}</b></td>
         <td><code>{{ r.path }}</code></td>
+        <td><span class="badge badge-outline">{{ r.kind }}</span></td>
         <td>{{ r.size_kb }} KB</td>
-        <td><a href="{{ url_for('outputs_file', filename=r.path) }}" class="btn btn-secondary" style="padding:6px 14px; font-size:0.82rem;" target="_blank">Open</a></td>
+        <td><a href="{{ url_for('outputs_file', filename=r.path) }}" class="btn btn-secondary" style="padding:6px 14px; font-size:0.82rem;" {% if r.kind in ['PNG','JPG','JPEG','WEBP','SVG','PDF','TXT'] %}target="_blank"{% endif %}>Open</a></td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
+<p class="empty-filter" id="report-empty" hidden>No files match that search.</p>
+<script>
+document.getElementById('report-search').addEventListener('input', (event) => {
+    const query = event.target.value.trim().toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('#reports-table tbody tr').forEach((row) => {
+        row.hidden = !row.dataset.search.includes(query);
+        if (!row.hidden) visible += 1;
+    });
+    document.getElementById('report-empty').hidden = visible > 0;
+});
+</script>
 {% else %}
 <div class="stub-note">
     No reports found yet. Run <code>python main.py</code> to generate the target class-balance

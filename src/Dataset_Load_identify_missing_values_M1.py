@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # 1. Load the dataset
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,7 +43,8 @@ print(df["glucose"].describe())
 plt.figure(figsize=(10, 6))
 # cbar=False hides the color bar; yticklabels=False hides row numbers for cleaner visuals;
 # cmap="viridis" Uses a purple-to-yellow color scale for high contrast.
-sns.heatmap(df.isnull(), cbar=False, yticklabels=False, cmap="viridis")
+plt.imshow(df.isnull().to_numpy(), aspect="auto", interpolation="nearest", cmap="viridis")
+plt.yticks([])
 plt.title("Missing Values Heatmap - GlucoTrend")
 plt.tight_layout()
 plt.show()

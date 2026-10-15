@@ -33,7 +33,13 @@ PIPELINE = [
     "Decision_Tree_Classifier_M3.py",      # Module_3: tree-based classifiers
     "Random_Forest_Tree_M3.py",
     "AdaBoost_Classifier_M3.py",
+    "CV_Decision_Tree_All_classifi_Regression_Metrics_M5.py",
     "K_Means_Elbow_Silhouetee_M4.py",      # Module_4: unsupervised clustering
+    "Anomaly_Detection_Isolat_Forest_M4.py",
+    "PCA_M4.py",
+    "t-SNE_M4.py",
+    "DBSCAN_Raw_datasetM4.py",
+    "Hierarchical_cluste_Agglomerative_divisive_M4.py",
 ]
 
 

@@ -1,40 +1,58 @@
 {% extends "base.html" %}
 {% block title %}About{% endblock %}
 {% block content %}
-<section class="hero">
-    <span class="eyebrow">Project overview</span>
+<section class="hero about-hero">
+    <span class="eyebrow">Project overview · GlucoBench benchmark</span>
     <h1>About GlucoTrend</h1>
-    <p class="lede">
-        GlucoTrend applies machine learning to continuous glucose monitoring (CGM) data
-        to forecast future glucose readings and classify glucose-range risk, using the
-        GlucoBench benchmark dataset (10 patients, 15,731 timestamped readings).
-    </p>
+    <p class="lede">A hands-on machine learning project for exploring continuous glucose monitoring data. It brings data inspection, feature preparation, predictive modeling, clustering, and evaluation into one browsable workspace.</p>
+    <div class="about-facts"><span><b>{{ stats.patients if stats else '—' }}</b> participants</span><span><b>{{ "{:,}".format(stats.rows) if stats else '—' }}</b> timestamped readings</span><span><b>5</b> target framings</span><span><b>5</b> project modules</span></div>
 </section>
 
-<div class="section-title"><h2>Objectives</h2></div>
-<ul class="target-list">
-    <li><b>Forecast</b> the next CGM reading(s) from recent history and context (insulin, carbs, activity).</li>
-    <li><b>Classify</b> glucose-range risk (in-range vs. hyperglycemia) for early alerting.</li>
-    <li><b>Compare</b> five target-variable framings (regression, binary, 3-class, 5-class, trend) on
-        the same feature set to see which is best supported by this dataset.</li>
-    <li><b>Cluster</b> patient/reading profiles with K-Means to surface behavior patterns beyond the labeled targets.</li>
-</ul>
+<section class="about-story">
+    <div class="about-prose">
+        <span class="eyebrow">Why this project</span>
+        <h2>Turn a table of readings into a path you can inspect.</h2>
+        <p>Glucose readings sit alongside context: recent history, insulin, meals, activity, and additional biosignals. GlucoTrend studies how that context can be prepared and examined by familiar machine learning methods.</p>
+        <p>The project is organized around transparency. The website exposes the raw dataset summary, each preprocessing stage, evaluation metrics, saved plots, and downloadable source code and outputs. This makes it easier to follow how the analysis was assembled and where each result came from.</p>
+        <p>Its benchmark data is small and synthetic/benchmark-oriented. The results are useful for learning and comparing methods, but they do not establish clinical performance or provide treatment recommendations.</p>
+    </div>
+    <aside class="about-aside"><span class="aside-index">PROJECT SCOPE</span><div class="scope-line"><b>01</b><span>Inspect the data and its limitations</span></div><div class="scope-line"><b>02</b><span>Engineer outcomes and prepare features</span></div><div class="scope-line"><b>03</b><span>Compare supervised and unsupervised methods</span></div><div class="scope-line"><b>04</b><span>Make artifacts easy to review</span></div></aside>
+</section>
 
-<div class="section-title"><h2>Pipeline</h2></div>
-<p>
-    Dataset load &amp; missing-value audit &rarr; correlation/EDA &rarr;
-    <b>target variable engineering</b> &rarr; missing-value imputation &rarr;
-    categorical encoding (label / one-hot / ordinal / target / embedding) &rarr;
-    scaling &rarr; final preprocessing &rarr; classification (Decision Tree, Random Forest,
-    AdaBoost) &rarr; clustering (K-Means / K-Means++).
-</p>
+<section class="home-section about-methods">
+    <div class="section-intro"><div><span class="eyebrow">Questions the analysis asks</span><h2>One dataset.<br>Several lenses.</h2></div><p>Targets define what a model learns to predict. Unsupervised methods explore structure without using those labels in the same way.</p></div>
+    <div class="about-method-grid">
+        <article><span>SUPERVISED · M3 / M5</span><h3>Classification &amp; validation</h3><p>Decision Tree, Random Forest, and AdaBoost classify glucose range. Module 5 adds cross-validated evaluation to examine performance across folds.</p></article>
+        <article><span>UNSUPERVISED · M4</span><h3>Clusters &amp; embeddings</h3><p>K-Means, K-Means++, DBSCAN, and hierarchical clustering explore groups. PCA and t-SNE create lower-dimensional views for inspection.</p></article>
+        <article><span>ANOMALY REVIEW · M4</span><h3>Isolation Forest</h3><p>Flags unusual observations relative to the feature distribution. These are candidate anomalies for investigation, not diagnoses.</p></article>
+    </div>
+</section>
 
-<div class="section-title"><h2>Technologies used</h2></div>
-<div class="card-grid">
-    <div class="card"><h3>Python</h3><p>Core language for the entire pipeline.</p></div>
-    <div class="card"><h3>Pandas &amp; NumPy</h3><p>Data loading, cleaning, and feature engineering.</p></div>
-    <div class="card"><h3>Scikit-learn</h3><p>Preprocessing pipelines, classifiers, and clustering.</p></div>
-    <div class="card"><h3>Matplotlib &amp; Seaborn</h3><p>EDA, confusion matrices, and cluster visualizations.</p></div>
-    <div class="card"><h3>Flask</h3><p>This web application, serving live data and predictions.</p></div>
-</div>
+<section class="home-section">
+    <div class="section-intro"><div><span class="eyebrow">Analysis path</span><h2>From source data<br>to saved result.</h2></div><p>The staged workflow keeps preparation and modeling work visible, with scripts and artifacts linked in the Code &amp; Outputs library.</p></div>
+    <div class="about-pipeline">
+        <div><b>01</b><h3>Load &amp; audit</h3><p>Review columns, missing values, duplicates, and dataset quirks.</p></div>
+        <div><b>02</b><h3>Explore &amp; engineer</h3><p>Build targets and inspect feature relationships.</p></div>
+        <div><b>03</b><h3>Prepare features</h3><p>Impute, encode categories, scale, and assemble model inputs.</p></div>
+        <div><b>04</b><h3>Fit &amp; compare</h3><p>Train classifiers, clustering methods, and validation analyses.</p></div>
+        <div><b>05</b><h3>Review artifacts</h3><p>Inspect charts, reports, predictions, and saved model files.</p></div>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="section-title"><h2>Targets engineered in the project</h2><span class="hint">Target definitions live in the M2 scripts</span></div>
+    <div class="target-grid">
+        <article><span class="target-number">01</span><div><h3>Future glucose</h3><p><code>glucose_lead_1 / 3 / 6</code> · Regression horizons.</p></div><span class="target-arrow">↗</span></article>
+        <article><span class="target-number">02</span><div><h3>Binary range</h3><p><code>target_binary</code> · In range or out of range around 70–180 mg/dL.</p></div><span class="target-arrow">↗</span></article>
+        <article><span class="target-number">03</span><div><h3>Three / five classes</h3><p><code>target_ada3</code>, <code>target_5class</code> · Coarser and finer glucose bands.</p></div><span class="target-arrow">↗</span></article>
+        <article><span class="target-number">04</span><div><h3>Trend</h3><p><code>target_trend</code> · Quantile-calibrated direction of change.</p></div><span class="target-arrow">↗</span></article>
+    </div>
+</section>
+
+<section class="home-section about-stack">
+    <div class="section-title"><h2>Built with</h2><a class="text-link" href="{{ url_for('library') }}">Browse source files →</a></div>
+    <div class="stack-row"><b>Python</b><span>Analysis &amp; application</span><b>Pandas / NumPy</b><span>Data handling</span><b>scikit-learn</b><span>Models &amp; preprocessing</span><b>Flask</b><span>Web interface</span><b>Matplotlib</b><span>Charts</span></div>
+</section>
+
+<section class="journey-band about-cta"><div><span class="eyebrow">Explore the project</span><h2>Follow a result back to its source.</h2><p>Open every script, chart, metric, prediction file, and saved model artifact from one searchable library.</p></div><div class="journey-links"><a href="{{ url_for('library') }}"><span>01</span> Code &amp; Outputs <b>↗</b></a><a href="{{ url_for('models') }}"><span>02</span> Model comparison <b>↗</b></a><a href="{{ url_for('visualization') }}"><span>03</span> Visualization gallery <b>↗</b></a></div></section>
 {% endblock %}

@@ -21,6 +21,13 @@ The Flask app is fully wired to real data — nothing is a static placeholder:
 - **/dashboard** — aggregated headline numbers (best model, class balance, etc.)
 - **/reports** — lists and serves real downloadable report files
 
+The Models page includes an interactive metric selector for comparing classifiers and
+expands each model card for additional details. The original pasted material is kept in
+`reference/Pasted_Codes_Reference.txt` for completeness. It includes placement-prediction
+scripts and generic Python examples whose Windows paths and target assumptions do not
+match GlucoTrend; the runnable GlucoTrend pipeline is the project-root `main.py` and
+the adapted scripts under `src/`.
+
 ## Target variables (see src/target_variable_engineering_M2.py)
 | Column | Framing | Notes |
 |---|---|---|
@@ -55,3 +62,17 @@ inside any of them to retrain on `target_ada3`, `target_5class`, or `target_tren
 ## Module 4 - clustering
 - `K_Means_Elbow_Silhouetee_M4.py` — K-Means & K-Means++ on glucose / heart_rate /
   stress_level / hbA1c, with Elbow, Silhouette, 3-D, and PCA visualizations.
+- `Anomaly_Detection_Isolat_Forest_M4.py`, `PCA_M4.py`, `t-SNE_M4.py`,
+  `DBSCAN_Raw_datasetM4.py`, and `Hierarchical_cluste_Agglomerative_divisive_M4.py`
+  — GlucoBench-compatible anomaly detection, dimensionality reduction, and both
+  agglomerative and divisive clustering.
+
+## Module 5 - cross-validation
+- `CV_Decision_Tree_All_classifi_Regression_Metrics_M5.py` — five-fold stratified
+  Decision Tree evaluation for the GlucoTrend `target_binary` task. Outputs include
+  weighted classification metrics, balanced accuracy, ROC-AUC, predictions, and a
+  confusion matrix. Regression-only metrics from the placement example are not used
+  for this classification target.
+
+`python main.py` runs the complete M1–M5 workflow. The Module 4 sample-based analyses
+write their artifacts under `outputs/GlucoTrend_Module_4_Outputs/`.

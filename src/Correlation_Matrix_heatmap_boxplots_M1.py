@@ -2,7 +2,6 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Ensure the output directory exists
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,17 +31,14 @@ print(corr_matrix)
 
 # Create Heatmap
 plt.figure(figsize=(14, 12))
-sns.heatmap(
-    corr_matrix,
-    annot=True,
-    cmap="coolwarm",  # from blue (cool) through white to red (warm)
-    fmt=".2f",
-    vmin=-1,
-    vmax=1,
-    square=True,
-    linewidths=0.5,
-    annot_kws={"size": 7}
-)
+ax = plt.gca()
+heatmap = ax.imshow(corr_matrix, cmap="coolwarm", vmin=-1, vmax=1, aspect="equal")
+plt.colorbar(heatmap, ax=ax, fraction=0.046, pad=0.04)
+ax.set_xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=90, fontsize=7)
+ax.set_yticks(range(len(corr_matrix.index)), corr_matrix.index, fontsize=7)
+for row in range(len(corr_matrix.index)):
+    for column in range(len(corr_matrix.columns)):
+        ax.text(column, row, f"{corr_matrix.iloc[row, column]:.2f}", ha="center", va="center", fontsize=6)
 plt.title("Correlation Heatmap of Numerical Features - GlucoTrend", fontsize=14, fontweight="bold")
 plt.xticks(rotation=90, fontsize=7)
 plt.yticks(fontsize=7)
@@ -73,13 +69,10 @@ if target_col not in df.columns:
 feature_cols = [c for c in numerical_cols if c != "glucose"]
 
 for col in feature_cols[:12]:  # keep the run fast; expand as needed
-    plt.figure(figsize=(6, 5))
-    sns.boxplot(
-        x=target_col,
-        y=col,
-        data=df
-    )
+    fig, ax = plt.subplots(figsize=(6, 5))
+    df.boxplot(column=col, by=target_col, ax=ax, grid=False)
     plt.title(f"{col} vs {target_col}", fontsize=12, fontweight="bold")
+    fig.suptitle("")
     plt.xlabel(target_col)
     plt.ylabel(col)
     plt.tight_layout()

@@ -22,7 +22,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,1.0,0,none,0,none,92.3,37.1,2.34,deep,none,2,0.0,Libre_2,7.1,24,F,90,9,55,America/New_York,USA,90.1,89.8,89.9,89.63333333333333,0.0800000000000011,In_Range,In_Range
 1,0.0,0.99,0,none,0,none,86.6,37.5,2.12,REM,steroid,5,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,110.0,109.7,110.2,109.86666666666666,0.1,In_Range,In_Range
 1,0.0,1.09,0,none,1574,medium,106.1,37.1,1.58,light,beta_blocker,0,0.0,Medtronic_670G,7.9,25,M,60,11,46,America/Los_Angeles,USA,160.5,161.4,163.1,161.18333333333334,-0.1199999999999988,In_Range,In_Range
-1,0.0,1.15,0,none,0,none,62.3,36.3,1.99,REM,steroid,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,189.5,189.1,188.4,188.7083333333333,0.1,Out_of_Range,Out_of_Range
+1,0.0,1.15,0,none,0,none,62.3,36.3,1.99,REM,steroid,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,189.5,189.1,188.4,188.70833333333331,0.1,Out_of_Range,Out_of_Range
 1,0.0,0.88,0,none,0,none,63.6,36.4,1.31,awake,beta_blocker,5,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,156.8,157.6,157.2,157.25833333333335,-0.025,In_Range,In_Range
 1,0.0,0.86,0,none,0,none,70.1,37.2,1.25,deep,antihistamine,2,0.0,Medtronic_670G,6.6,70,F,99,12,44,Europe/London,UK,85.3,86.0,85.8,85.49166666666667,0.0,In_Range,In_Range
 1,0.0,0.89,0,none,0,none,94.1,35.7,1.38,deep,beta_blocker,5,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,120.4,119.4,117.9,118.175,0.1,In_Range,In_Range
@@ -336,7 +336,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,0.95,0,none,0,none,69.5,36.0,2.29,REM,steroid,4,0.0,Libre_2,7.1,24,F,90,9,55,America/New_York,USA,74.6,73.9,75.0,75.28333333333333,0.0200000000000007,In_Range,In_Range
 1,0.0,0.92,0,none,0,none,66.9,36.0,1.61,deep,beta_blocker,0,0.0,Medtronic_670G,8.0,53,M,52,10,47,America/New_York,USA,144.4,144.9,144.7,145.18333333333334,0.0900000000000005,In_Range,In_Range
 1,0.0,1.1,0,none,0,none,87.5,35.9,0.79,deep,steroid,5,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,81.8,81.8,81.8,81.96666666666667,0.0599999999999994,In_Range,In_Range
-1,0.0,0.95,0,none,0,none,87.5,36.3,1.49,deep,beta_blocker,2,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,187.3,188.3,188.0,187.5833333333333,-0.1,Out_of_Range,Out_of_Range
+1,0.0,0.95,0,none,0,none,87.5,36.3,1.49,deep,beta_blocker,2,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,187.3,188.3,188.0,187.58333333333331,-0.1,Out_of_Range,Out_of_Range
 1,0.0,0.83,0,none,0,none,98.2,36.1,2.04,deep,steroid,5,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,91.6,92.8,92.8,92.825,-0.1,In_Range,In_Range
 1,0.0,1.0,0,none,0,none,67.0,37.0,1.57,REM,antihistamine,1,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,89.3,88.4,87.7,88.27499999999999,0.0200000000000017,In_Range,In_Range
 1,0.0,0.87,0,none,0,none,79.7,37.2,2.43,deep,antihistamine,0,0.0,Medtronic_670G,7.9,25,M,60,11,46,America/Los_Angeles,USA,161.5,161.7,161.5,161.60833333333332,0.0,In_Range,In_Range
@@ -442,7 +442,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,1.06,0,none,0,none,97.5,37.3,0.85,REM,antihistamine,0,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,79.4,78.7,79.5,79.21666666666667,-0.0933333333333337,In_Range,In_Range
 1,0.0,1.08,0,none,0,none,100.7,36.7,1.83,light,beta_blocker,4,0.0,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,94.7,95.4,95.6,95.63333333333333,-0.1200000000000017,In_Range,In_Range
 1,0.0,1.11,0,none,0,none,86.9,36.0,1.62,awake,none,4,0.0,Medtronic_670G,8.0,53,M,52,10,47,America/New_York,USA,146.2,144.7,145.1,144.325,0.0200000000000045,In_Range,In_Range
-1,0.0,0.87,0,none,0,none,63.9,35.6,1.78,deep,antihistamine,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,185.7,184.8,184.7,184.3583333333333,-0.1299999999999982,Out_of_Range,Out_of_Range
+1,0.0,0.87,0,none,0,none,63.9,35.6,1.78,deep,antihistamine,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,185.7,184.8,184.7,184.35833333333332,-0.1299999999999982,Out_of_Range,Out_of_Range
 1,0.0,1.09,0,none,0,none,89.5,36.8,1.67,awake,steroid,0,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,110.3,108.9,109.6,109.71666666666668,-0.0799999999999983,In_Range,In_Range
 1,0.0,0.87,0,none,0,none,96.2,35.5,1.41,awake,beta_blocker,5,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,130.1,129.0,129.7,129.375,-0.1,In_Range,In_Range
 1,0.0,0.82,0,none,0,none,101.4,37.2,0.88,deep,beta_blocker,2,0.0,Medtronic_670G,8.0,53,M,52,10,47,America/New_York,USA,147.5,148.6,149.9,149.20000000000002,0.0,In_Range,In_Range
@@ -628,7 +628,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,0.81,0,none,0,none,83.7,36.2,1.85,light,none,0,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,85.7,84.1,83.7,84.18333333333334,-0.0800000000000011,In_Range,In_Range
 1,0.0,1.08,0,none,0,none,88.5,37.5,2.34,deep,steroid,2,0.0,Medtronic_670G,7.9,25,M,60,11,46,America/Los_Angeles,USA,129.9,131.0,131.2,131.44166666666666,0.0399999999999977,In_Range,In_Range
 1,0.0,0.97,0,none,0,none,109.8,37.5,1.18,light,antihistamine,3,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,97.4,96.8,96.5,96.81666666666666,-0.1,In_Range,In_Range
-1,0.0,0.98,0,none,0,none,106.0,37.1,0.61,deep,steroid,4,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,186.2,186.2,183.6,184.6083333333333,0.1400000000000034,Out_of_Range,Out_of_Range
+1,0.0,0.98,0,none,0,none,106.0,37.1,0.61,deep,steroid,4,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,186.2,186.2,183.6,184.60833333333332,0.1400000000000034,Out_of_Range,Out_of_Range
 1,0.0,1.01,0,none,0,none,91.4,36.7,0.51,light,beta_blocker,5,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,98.8,97.7,96.0,96.52500000000002,0.0200000000000017,In_Range,In_Range
 1,0.0,0.95,0,none,0,none,65.6,36.1,1.73,awake,antihistamine,1,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,109.4,108.7,110.1,109.98333333333332,-0.0400000000000005,In_Range,In_Range
 1,0.0,1.17,0,none,0,none,67.9,37.3,0.73,awake,none,2,0.0,Libre_2,7.1,24,F,90,9,55,America/New_York,USA,86.4,85.1,84.9,85.625,-0.0600000000000008,In_Range,In_Range
@@ -722,7 +722,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,1.16,0,none,0,none,93.4,36.2,1.74,light,beta_blocker,4,0.8,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,109.4,109.1,109.2,109.01666666666668,-0.1,In_Range,In_Range
 1,0.0,1.11,0,none,0,none,75.3,36.8,2.29,REM,beta_blocker,0,0.0,Medtronic_670G,6.6,70,F,99,12,44,Europe/London,UK,84.3,83.1,83.1,82.80833333333332,-0.1199999999999988,In_Range,In_Range
 1,0.0,1.08,0,none,0,none,71.9,35.6,2.17,deep,none,2,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,113.4,112.9,114.3,113.85833333333332,-0.0600000000000022,In_Range,In_Range
-1,0.0,0.88,0,none,4210,low,100.4,36.7,2.29,REM,none,5,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,184.6,184.0,184.0,184.2083333333333,-0.15,Out_of_Range,Out_of_Range
+1,0.0,0.88,0,none,4210,low,100.4,36.7,2.29,REM,none,5,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,184.6,184.0,184.0,184.20833333333331,-0.15,Out_of_Range,Out_of_Range
 1,0.0,0.91,0,none,0,none,76.5,36.9,0.98,REM,antihistamine,5,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,110.2,108.3,108.6,108.86666666666667,0.0,In_Range,In_Range
 1,0.0,1.03,0,none,0,none,68.6,36.7,1.28,awake,antihistamine,1,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,80.3,83.1,84.5,83.3,-0.1599999999999994,In_Range,In_Range
 1,0.0,1.02,0,none,0,none,77.7,36.9,1.46,light,none,5,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,91.0,90.5,89.8,89.925,-0.05,In_Range,In_Range
@@ -886,7 +886,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,1.04,0,none,0,none,69.7,36.3,1.62,REM,beta_blocker,1,0.0,Medtronic_670G,6.6,70,F,99,12,44,Europe/London,UK,86.4,86.0,85.1,84.925,-0.0200000000000017,In_Range,In_Range
 1,0.0,1.06,0,none,0,none,72.4,36.0,1.62,deep,antihistamine,5,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,72.7,73.3,72.3,72.61666666666666,0.2,In_Range,In_Range
 1,0.0,1.05,0,none,0,none,104.3,35.6,2.09,awake,steroid,2,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,87.3,85.4,84.8,85.68333333333334,0.0400000000000005,In_Range,In_Range
-1,0.0,0.81,0,none,0,none,76.4,36.6,1.09,REM,steroid,4,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,183.6,184.8,184.6,184.6083333333333,0.0866666666666674,Out_of_Range,Out_of_Range
+1,0.0,0.81,0,none,0,none,76.4,36.6,1.09,REM,steroid,4,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,183.6,184.8,184.6,184.60833333333332,0.0866666666666674,Out_of_Range,Out_of_Range
 1,0.0,1.09,0,none,0,none,73.6,36.9,1.16,awake,none,1,0.0,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,103.0,101.6,102.1,102.4,0.0199999999999988,In_Range,In_Range
 1,0.0,0.97,0,none,0,none,84.4,36.3,2.21,awake,beta_blocker,4,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,107.6,106.9,109.2,108.09166666666664,0.0400000000000005,In_Range,In_Range
 1,0.0,0.89,0,none,0,none,75.4,36.5,2.21,light,steroid,3,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,150.1,150.5,151.5,151.15,0.1600000000000022,In_Range,In_Range
@@ -1317,7 +1317,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,0.97,0,none,0,none,75.5,37.2,2.38,REM,steroid,4,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,155.2,155.9,155.1,154.275,-0.0199999999999988,In_Range,In_Range
 1,0.0,0.96,0,none,0,none,86.7,36.1,1.06,awake,beta_blocker,1,0.0,Medtronic_670G,8.0,53,M,52,10,47,America/New_York,USA,111.2,111.1,109.7,110.13333333333333,-0.1600000000000008,In_Range,In_Range
 1,0.0,0.91,0,none,0,none,75.4,35.7,1.64,awake,none,1,0.0,Medtronic_670G,6.6,70,F,99,12,44,Europe/London,UK,75.8,78.0,78.2,76.98333333333333,-0.0400000000000005,In_Range,In_Range
-1,0.0,1.18,0,none,0,none,62.2,36.9,1.81,light,beta_blocker,0,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,183.1,183.4,183.9,184.0833333333333,0.0199999999999988,Out_of_Range,Out_of_Range
+1,0.0,1.18,0,none,0,none,62.2,36.9,1.81,light,beta_blocker,0,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,183.1,183.4,183.9,184.08333333333331,0.0199999999999988,Out_of_Range,Out_of_Range
 0,9.4,0.85,90,dinner,0,none,63.7,36.6,2.24,awake,beta_blocker,5,0.0,Medtronic_670G,8.0,53,M,52,10,47,America/New_York,USA,144.8,144.8,145.2,145.475,0.0799999999999954,In_Range,In_Range
 1,0.0,0.9,0,none,0,none,104.1,35.8,2.35,REM,steroid,1,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,114.2,113.0,113.4,113.47499999999998,-0.1400000000000005,In_Range,In_Range
 1,0.0,1.0,0,none,0,none,63.0,35.9,2.09,light,none,5,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,128.4,127.5,126.0,127.25,0.0800000000000011,In_Range,In_Range
@@ -1346,7 +1346,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,1.07,0,none,0,none,101.7,37.2,1.86,REM,steroid,4,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,87.7,87.3,88.6,88.05,0.0200000000000002,In_Range,In_Range
 1,0.0,1.17,0,none,0,none,61.9,37.5,1.63,deep,antihistamine,2,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,181.4,180.8,177.8,179.65833333333333,0.1400000000000005,Out_of_Range,Out_of_Range
 1,4.9,1.2,60,lunch,0,none,94.5,36.7,0.64,deep,none,0,0.0,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,103.2,102.9,103.1,103.15833333333332,0.0,In_Range,In_Range
-1,0.0,1.15,0,none,0,none,104.3,36.3,1.53,light,none,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,187.3,187.3,187.3,187.7083333333333,0.0466666666666659,Out_of_Range,Out_of_Range
+1,0.0,1.15,0,none,0,none,104.3,36.3,1.53,light,none,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,187.3,187.3,187.3,187.70833333333331,0.0466666666666659,Out_of_Range,Out_of_Range
 1,0.0,0.98,0,none,0,none,82.1,37.2,2.49,awake,beta_blocker,3,0.0,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,98.3,98.5,98.0,98.38333333333333,-0.0799999999999983,In_Range,In_Range
 1,0.0,1.02,0,none,0,none,97.3,36.1,2.16,deep,beta_blocker,5,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,85.5,85.4,86.3,85.73333333333333,-0.0049999999999997,In_Range,In_Range
 1,0.0,0.98,0,none,0,none,85.5,36.6,0.65,awake,none,0,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,103.5,103.6,103.5,103.36666666666666,0.1,In_Range,In_Range
@@ -1594,7 +1594,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,0.88,0,none,0,none,105.9,37.5,1.42,awake,beta_blocker,1,0.0,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,110.2,110.7,110.9,111.575,-0.0400000000000005,In_Range,In_Range
 1,0.0,0.94,0,none,0,none,107.0,36.8,0.57,light,beta_blocker,4,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,95.5,96.2,96.1,95.725,-0.0199999999999988,In_Range,In_Range
 1,0.0,1.03,0,none,0,none,66.2,36.0,1.87,REM,beta_blocker,0,0.0,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,106.8,106.9,108.0,107.40833333333336,-0.0200000000000002,In_Range,In_Range
-1,0.0,1.09,0,none,0,none,104.4,35.9,1.83,REM,beta_blocker,5,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,186.4,187.0,185.4,185.7083333333333,-0.0600000000000022,Out_of_Range,Out_of_Range
+1,0.0,1.09,0,none,0,none,104.4,35.9,1.83,REM,beta_blocker,5,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,186.4,187.0,185.4,185.70833333333331,-0.0600000000000022,Out_of_Range,Out_of_Range
 1,0.0,1.19,0,none,0,none,104.0,37.2,1.52,awake,beta_blocker,0,0.0,Libre_2,7.1,24,F,90,9,55,America/New_York,USA,96.0,95.4,96.2,96.25,0.0400000000000005,In_Range,In_Range
 1,0.0,0.89,0,none,0,none,90.9,35.7,1.92,light,antihistamine,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,174.1,174.0,172.7,173.45000000000002,-0.0399999999999996,In_Range,In_Range
 1,0.0,1.06,0,none,0,none,67.4,37.3,1.68,light,none,5,0.0,Medtronic_670G,8.0,53,M,52,10,47,America/New_York,USA,105.2,104.8,103.7,106.78333333333336,0.0599999999999994,In_Range,In_Range
@@ -1972,7 +1972,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,1.03,0,none,0,none,67.1,37.4,2.39,light,steroid,2,0.0,Libre_2,7.1,24,F,90,9,55,America/New_York,USA,82.3,83.3,84.1,83.95,0.0666666666666666,In_Range,In_Range
 1,0.0,0.92,0,none,0,none,86.6,36.6,0.52,light,steroid,1,0.0,Medtronic_670G,6.6,70,F,99,12,44,Europe/London,UK,73.2,73.5,70.4,71.84166666666667,0.0333333333333333,In_Range,In_Range
 1,0.0,0.92,0,none,0,none,88.8,35.7,1.25,deep,steroid,1,0.0,Medtronic_670G,7.9,25,M,60,11,46,America/Los_Angeles,USA,115.2,114.4,113.7,114.53333333333336,0.0733333333333329,In_Range,In_Range
-1,0.0,0.87,0,none,0,none,100.7,37.4,2.41,light,none,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,178.1,180.0,181.2,180.4833333333333,-0.0399999999999977,In_Range,In_Range
+1,0.0,0.87,0,none,0,none,100.7,37.4,2.41,light,none,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,178.1,180.0,181.2,180.48333333333332,-0.0399999999999977,In_Range,In_Range
 1,0.0,0.97,0,none,0,none,100.0,37.1,2.25,deep,antihistamine,1,0.0,Medtronic_670G,7.9,25,M,60,11,46,America/Los_Angeles,USA,149.5,150.0,149.6,149.55833333333334,0.0,In_Range,In_Range
 1,0.0,0.94,0,none,0,none,73.4,36.0,0.75,light,antihistamine,0,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,116.7,117.7,118.3,117.71666666666668,0.0,In_Range,In_Range
 1,0.0,0.98,0,none,0,none,98.7,36.3,1.83,awake,antihistamine,1,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,110.2,108.5,108.9,108.96666666666668,-0.0800000000000011,In_Range,In_Range
@@ -2113,7 +2113,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,0.83,0,none,0,none,97.0,36.0,1.8,REM,none,5,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,112.7,112.9,113.3,113.7,0.0,In_Range,In_Range
 1,0.0,0.86,0,none,0,none,72.5,36.7,1.19,deep,antihistamine,3,0.0,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,104.0,104.2,103.5,103.66666666666669,0.0800000000000011,In_Range,In_Range
 1,0.0,1.03,0,none,0,none,82.5,36.5,1.35,awake,steroid,4,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,97.3,97.8,96.7,97.45,0.0299999999999997,In_Range,In_Range
-1,0.0,0.94,0,none,0,none,88.1,36.3,2.42,REM,antihistamine,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,188.8,188.1,186.9,186.9583333333333,-0.0200000000000017,Out_of_Range,Out_of_Range
+1,0.0,0.94,0,none,0,none,88.1,36.3,2.42,REM,antihistamine,1,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,188.8,188.1,186.9,186.95833333333331,-0.0200000000000017,Out_of_Range,Out_of_Range
 1,0.0,1.18,0,none,0,none,61.5,36.0,0.53,awake,steroid,5,0.0,Libre_2,7.1,24,F,90,9,55,America/New_York,USA,79.7,78.9,78.6,78.86666666666666,0.1599999999999994,In_Range,In_Range
 1,0.0,0.92,0,none,0,none,95.2,37.4,1.52,light,steroid,4,0.0,Medtronic_670G,6.6,70,F,99,12,44,Europe/London,UK,79.2,79.0,77.4,78.25833333333334,-0.1599999999999994,In_Range,In_Range
 1,0.0,0.98,0,none,0,none,80.4,36.1,2.46,light,antihistamine,3,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,73.9,73.4,73.9,73.36666666666666,-0.1200000000000017,In_Range,In_Range
@@ -2659,7 +2659,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,0.81,0,none,0,none,104.5,36.6,2.24,deep,beta_blocker,2,0.0,Medtronic_670G,7.9,25,M,60,11,46,America/Los_Angeles,USA,132.5,133.6,135.6,133.95833333333334,-0.0199999999999988,In_Range,In_Range
 1,0.0,0.99,0,none,0,none,82.7,36.4,1.0,deep,antihistamine,4,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,108.7,110.6,110.4,109.875,0.0899999999999991,In_Range,In_Range
 1,0.0,1.12,0,none,0,none,99.1,37.1,1.88,light,steroid,3,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,94.4,94.8,96.2,95.78333333333336,-0.0600000000000022,In_Range,In_Range
-1,0.0,1.18,0,none,0,none,98.7,37.3,2.16,deep,none,5,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,188.0,190.2,191.2,191.5833333333333,0.0600000000000022,Out_of_Range,Out_of_Range
+1,0.0,1.18,0,none,0,none,98.7,37.3,2.16,deep,none,5,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,188.0,190.2,191.2,191.58333333333331,0.0600000000000022,Out_of_Range,Out_of_Range
 1,0.0,0.85,0,none,0,none,91.0,35.9,1.46,light,steroid,1,0.0,Libre_2,7.1,24,F,90,9,55,America/New_York,USA,74.9,73.2,73.0,73.00833333333334,0.0,In_Range,In_Range
 1,3.3,1.19,30,lunch,0,none,91.7,35.8,0.87,deep,steroid,1,0.0,Libre_2,8.3,23,F,51,9,52,Europe/London,UK,93.6,95.3,94.0,93.65833333333332,0.0900000000000005,In_Range,In_Range
 1,0.0,1.19,0,none,0,none,63.7,36.2,0.74,light,steroid,5,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,107.9,107.2,107.3,107.175,0.0599999999999994,In_Range,In_Range
@@ -3026,7 +3026,7 @@ cgm_quality_flag,insulin_bolus,insulin_basal,carbs,meal_type,exercise_steps,exer
 1,0.0,1.19,0,none,0,none,109.1,35.7,1.64,deep,beta_blocker,3,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,155.6,156.0,159.0,157.88333333333335,-0.0199999999999988,In_Range,In_Range
 1,0.0,1.03,0,none,0,none,108.0,37.1,0.72,light,beta_blocker,4,0.0,Dexcom_G6,6.6,19,M,99,13,48,America/New_York,USA,120.1,118.7,118.8,119.5,0.05,In_Range,In_Range
 1,0.0,0.96,0,none,0,none,63.1,37.0,1.54,deep,antihistamine,2,0.0,Libre_2,7.5,69,F,78,9,40,America/Los_Angeles,USA,156.0,157.4,156.2,156.875,-0.0199999999999988,In_Range,In_Range
-1,0.0,0.9,0,none,0,none,108.6,36.4,0.52,REM,antihistamine,3,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,187.1,186.4,185.2,185.4583333333333,-0.1399999999999977,Out_of_Range,Out_of_Range
+1,0.0,0.9,0,none,0,none,108.6,36.4,0.52,REM,antihistamine,3,0.0,Medtronic_670G,6.1,49,M,79,12,42,America/New_York,USA,187.1,186.4,185.2,185.45833333333331,-0.1399999999999977,Out_of_Range,Out_of_Range
 1,0.0,0.94,0,none,0,none,106.9,36.5,1.52,deep,none,0,0.0,Dexcom_G6,6.8,61,M,90,10,50,America/New_York,USA,81.8,82.1,79.7,79.65833333333333,0.0599999999999994,In_Range,In_Range
 1,0.0,0.86,0,none,0,none,97.4,36.8,2.42,REM,antihistamine,2,0.0,Libre_2,7.1,24,F,90,9,55,America/New_York,USA,91.9,90.8,90.5,90.875,0.0,In_Range,In_Range
 1,0.0,1.15,0,none,0,none,82.7,36.6,1.98,light,none,0,0.0,Dexcom_G6,7.8,35,F,99,15,54,Europe/London,UK,108.2,107.7,108.0,108.40000000000002,-0.0800000000000011,In_Range,In_Range

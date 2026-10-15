@@ -18,7 +18,7 @@
         {% for image in images %}
         <div class="gallery-item">
             <img src="{{ url_for('outputs_file', filename=image.path) }}" alt="{{ image.name }}" loading="lazy">
-            <div class="caption">{{ image.name }}</div>
+            <div class="caption">{{ image.name }}<small>{{ image.path }}</small></div>
         </div>
         {% endfor %}
     </div>
