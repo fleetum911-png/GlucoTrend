@@ -42,12 +42,60 @@
     <a class="fact-link" href="{{ url_for('dataset') }}">Explore dataset <span>↗</span></a>
 </section>
 
+<section class="dataset-upload-section" id="dataset-upload">
+    <div class="upload-copy">
+        <span class="eyebrow">Bring your own data</span>
+        <h2>Upload a dataset</h2>
+        <p>Choose a CSV file to add it to this project. Your upload is saved separately from the GlucoBench benchmark.</p>
+        <span class="upload-meta">CSV format · up to 50 MB</span>
+    </div>
+    <form class="dataset-upload-box" action="{{ url_for('upload_dataset') }}" method="post" enctype="multipart/form-data">
+        <label class="upload-dropzone" for="dataset-file">
+            <span class="upload-icon" aria-hidden="true">↑</span>
+            <strong>Choose a dataset file</strong>
+            <span id="upload-filename">CSV files are ready to upload</span>
+            <input id="dataset-file" type="file" name="dataset_file" accept=".csv,text/csv" required>
+        </label>
+        <button class="btn btn-primary upload-submit" type="submit">Upload dataset <span aria-hidden="true">↗</span></button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p class="upload-message upload-message-{{ category }}" role="status">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+    </form>
+</section>
+<script>
+    document.getElementById('dataset-file').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        document.getElementById('upload-filename').textContent = file ? file.name : 'CSV files are ready to upload';
+    });
+</script>
+
+<section class="home-section topic-section" aria-labelledby="course-topics">
+    <div class="section-intro"><div><span class="eyebrow">Course map</span><h2 id="course-topics">Explore GlucoTrend by topic.</h2></div><p>Pages and saved results are grouped around the course sequence, from data preparation through model evaluation and engineering.</p></div>
+    <div class="topic-grid">
+        <a class="topic-card" href="{{ url_for('dataset') }}"><span>M1 · LIFECYCLE</span><h3>Data &amp; quality</h3><p>Raw CGM data, missing values, duplicates, and exploratory charts.</p><b>Dataset and visualizations ↗</b></a>
+        <a class="topic-card" href="{{ url_for('models') }}"><span>M2 · LINEAR MODELS</span><h3>Regression &amp; classification</h3><p>Linear and Lasso glucose forecasting, plus Logistic and Multinomial classification with evaluation outputs.</p><b>Compare linear models ↗</b></a>
+        <a class="topic-card" href="{{ url_for('models') }}"><span>M3 · TREE MODELS</span><h3>Classification models</h3><p>Decision Tree, Random Forest, and AdaBoost results for glucose range classification.</p><b>Compare models ↗</b></a>
+        <a class="topic-card" href="{{ url_for('visualization') }}"><span>M4 · UNSUPERVISED</span><h3>Clusters &amp; structure</h3><p>K-Means, hierarchical clustering, DBSCAN, PCA, t-SNE, and anomaly analysis outputs.</p><b>Explore visualizations ↗</b></a>
+        <a class="topic-card" href="{{ url_for('reports') }}"><span>M5 · EVALUATION</span><h3>Validation &amp; metrics</h3><p>Cross-validation, classification reports, confusion matrices, and saved evaluation results.</p><b>Browse reports ↗</b></a>
+        <a class="topic-card" href="{{ url_for('visualization') }}#outputs"><span>M6 · ML ENGINEERING</span><h3>Artifacts &amp; workflow</h3><p>Prediction serving, packaged models, and generated artifacts.</p><b>Browse project outputs ↗</b></a>
+    </div>
+</section>
+
 <section class="home-section">
     <div class="section-intro"><div><span class="eyebrow">The modeling work</span><h2>Three ways to learn<br>from the same signal.</h2></div><p>Each classifier offers a different balance of clarity and flexibility. Their saved results are available on the Models page, alongside precision, recall, and F1.</p></div>
     <div class="model-preview-grid">
         <article class="model-preview model-tree"><div class="model-index">01 <span>INTERPRETABLE</span></div><h3>Decision Tree</h3><p>A sequence of feature-based splits that can be followed from input to output. A useful baseline when tracing model decisions matters.</p><div class="tree-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><a href="{{ url_for('models') }}">Inspect the tree <span>→</span></a></article>
         <article class="model-preview model-forest"><div class="model-index">02 <span>ENSEMBLE</span></div><h3>Random Forest</h3><p>Combines many trees trained on varied samples and feature subsets. Aggregation can make predictions less sensitive to one tree.</p><div class="forest-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><a href="{{ url_for('models') }}">Explore the ensemble <span>→</span></a></article>
         <article class="model-preview model-boost"><div class="model-index">03 <span>SEQUENTIAL</span></div><h3>AdaBoost</h3><p>Builds a sequence of small trees, increasing focus on observations earlier rounds classified poorly.</p><div class="boost-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><a href="{{ url_for('models') }}">See evaluation metrics <span>→</span></a></article>
+    </div>
+    <div class="section-title"><h3>Linear and logistic baselines</h3><a class="text-link" href="{{ url_for('models') }}">Compare all models →</a></div>
+    <div class="method-grid model-preview-linear-grid">
+        <article class="method-card"><span>M2 · REGRESSION</span><h3>Linear Regression</h3><p>Predicts the next glucose reading and reports MAE, RMSE, R², and MAPE.</p><a href="{{ url_for('models') }}">View evaluation →</a></article>
+        <article class="method-card"><span>M2 · REGULARIZED REGRESSION</span><h3>Lasso Regression</h3><p>Forecasts next-reading glucose with L1 regularization and a cross-validated penalty.</p><a href="{{ url_for('models') }}">View evaluation →</a></article>
+        <article class="method-card"><span>M2 · BINARY CLASSIFICATION</span><h3>Logistic Regression</h3><p>Classifies in-range versus out-of-range readings from prior sensor features.</p><a href="{{ url_for('models') }}">View evaluation →</a></article>
+        <article class="method-card"><span>M2 · MULTICLASS CLASSIFICATION</span><h3>Multinomial Regression</h3><p>Predicts one of five glucose trend-direction classes using multinomial logistic loss.</p><a href="{{ url_for('models') }}">View evaluation →</a></article>
     </div>
     <div class="model-footnote"><span class="footnote-symbol">i</span><p>These are educational model comparisons on a small benchmark dataset. Scores are not clinical validation, and accuracy alone may conceal errors on less common classes.</p></div>
 </section>

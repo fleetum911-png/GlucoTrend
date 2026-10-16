@@ -22,14 +22,14 @@
 <section class="home-section about-methods">
     <div class="section-intro"><div><span class="eyebrow">Questions the analysis asks</span><h2>One dataset.<br>Several lenses.</h2></div><p>Targets define what a model learns to predict. Unsupervised methods explore structure without using those labels in the same way.</p></div>
     <div class="about-method-grid">
-        <article><span>SUPERVISED · M3 / M5</span><h3>Classification &amp; validation</h3><p>Decision Tree, Random Forest, and AdaBoost classify glucose range. Module 5 adds cross-validated evaluation to examine performance across folds.</p></article>
+        <article><span>SUPERVISED · M2 / M3 / M5</span><h3>Regression, classification &amp; validation</h3><p>Linear and Lasso models forecast future glucose; Logistic and Multinomial models classify glucose state and trend. Tree classifiers and cross-validation provide additional comparisons.</p></article>
         <article><span>UNSUPERVISED · M4</span><h3>Clusters &amp; embeddings</h3><p>K-Means, K-Means++, DBSCAN, and hierarchical clustering explore groups. PCA and t-SNE create lower-dimensional views for inspection.</p></article>
         <article><span>ANOMALY REVIEW · M4</span><h3>Isolation Forest</h3><p>Flags unusual observations relative to the feature distribution. These are candidate anomalies for investigation, not diagnoses.</p></article>
     </div>
 </section>
 
 <section class="home-section">
-    <div class="section-intro"><div><span class="eyebrow">Analysis path</span><h2>From source data<br>to saved result.</h2></div><p>The staged workflow keeps preparation and modeling work visible, with scripts and artifacts linked in the Code &amp; Outputs library.</p></div>
+    <div class="section-intro"><div><span class="eyebrow">Analysis path</span><h2>From source data<br>to saved result.</h2></div><p>The staged workflow keeps preparation and modeling work visible, with generated artifacts grouped by topic in Visualization.</p></div>
     <div class="about-pipeline">
         <div><b>01</b><h3>Load &amp; audit</h3><p>Review columns, missing values, duplicates, and dataset quirks.</p></div>
         <div><b>02</b><h3>Explore &amp; engineer</h3><p>Build targets and inspect feature relationships.</p></div>
@@ -50,9 +50,9 @@
 </section>
 
 <section class="home-section about-stack">
-    <div class="section-title"><h2>Built with</h2><a class="text-link" href="{{ url_for('library') }}">Browse source files →</a></div>
+    <div class="section-title"><h2>Built with</h2><a class="text-link" href="{{ url_for('visualization') }}#outputs">Browse generated outputs →</a></div>
     <div class="stack-row"><b>Python</b><span>Analysis &amp; application</span><b>Pandas / NumPy</b><span>Data handling</span><b>scikit-learn</b><span>Models &amp; preprocessing</span><b>Flask</b><span>Web interface</span><b>Matplotlib</b><span>Charts</span></div>
 </section>
 
-<section class="journey-band about-cta"><div><span class="eyebrow">Explore the project</span><h2>Follow a result back to its source.</h2><p>Open every script, chart, metric, prediction file, and saved model artifact from one searchable library.</p></div><div class="journey-links"><a href="{{ url_for('library') }}"><span>01</span> Code &amp; Outputs <b>↗</b></a><a href="{{ url_for('models') }}"><span>02</span> Model comparison <b>↗</b></a><a href="{{ url_for('visualization') }}"><span>03</span> Visualization gallery <b>↗</b></a></div></section>
+<section class="journey-band about-cta"><div><span class="eyebrow">Explore the project</span><h2>Follow the analysis by topic.</h2><p>Browse generated charts, metrics, predictions, and saved model artifacts in workflow order.</p></div><div class="journey-links"><a href="{{ url_for('visualization') }}#outputs"><span>01</span> All outputs <b>↗</b></a><a href="{{ url_for('models') }}"><span>02</span> Model comparison <b>↗</b></a><a href="{{ url_for('preprocessing') }}"><span>03</span> Preprocessing <b>↗</b></a></div></section>
 {% endblock %}

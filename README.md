@@ -14,15 +14,15 @@ python app.py        # launches the Flask app at http://127.0.0.1:5000
 The Flask app is fully wired to real data — nothing is a static placeholder:
 - **/dataset** — live stats + row preview computed from the raw CSV
 - **/preprocessing** — pipeline steps with live done/not-run status per script
-- **/visualization** — image gallery built from whatever PNGs exist under outputs/
-- **/models** — real Accuracy/Precision/Recall/F1 read from each model's metrics CSV
+- **/visualization** — chart gallery plus the complete, searchable output list
+- **/models** — supervised, regression, clustering, anomaly, and dimensionality methods with saved evaluation metrics
 - **/prediction** — a real form; submits to the trained Decision Tree pipeline and
   returns a live In_Range / Out_of_Range prediction with class probabilities
 - **/dashboard** — aggregated headline numbers (best model, class balance, etc.)
 - **/reports** — lists and serves real downloadable report files
 
-The Models page includes an interactive metric selector for comparing classifiers and
-expands each model card for additional details. The original pasted material is kept in
+The Models page compares classification, regression, and unsupervised metrics and links
+to a downloadable output artifact for each method. The original pasted material is kept in
 `reference/Pasted_Codes_Reference.txt` for completeness. It includes placement-prediction
 scripts and generic Python examples whose Windows paths and target assumptions do not
 match GlucoTrend; the runnable GlucoTrend pipeline is the project-root `main.py` and
@@ -74,5 +74,13 @@ inside any of them to retrain on `target_ada3`, `target_5class`, or `target_tren
   confusion matrix. Regression-only metrics from the placement example are not used
   for this classification target.
 
-`python main.py` runs the complete M1–M5 workflow. The Module 4 sample-based analyses
+## Module 2 - linear models
+- `Linear_Regression_M2.py` and `Lasso_Regression_M2.py` — next-reading glucose forecasts,
+  compared with MAE, RMSE, R², and MAPE.
+- `Logistic_Regression_M2.py` — in-range / out-of-range classification.
+- `Multinomial_Regression_M2.py` — five-level glucose trend classification.
+Each script saves predictions, metrics, a serialized pipeline, and diagnostic plots under
+its matching `outputs/*_M2_Outputs/` folder.
+
+`python main.py` runs the complete M1–M5 workflow, including the Module 2 linear models. The Module 4 sample-based analyses
 write their artifacts under `outputs/GlucoTrend_Module_4_Outputs/`.

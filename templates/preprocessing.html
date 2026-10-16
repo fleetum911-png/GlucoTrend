@@ -2,12 +2,10 @@
 {% block title %}Preprocessing{% endblock %}
 {% block content %}
 <section class="hero">
-    <span class="eyebrow">src/*_M1.py &middot; src/*_M2.py</span>
-    <h1>Preprocessing Pipeline</h1>
+    <span class="eyebrow">M2 · Feature preparation</span>
+    <h1>Preprocessing Methods</h1>
     <p class="lede">
-        Every stage below reads from <code>dataset/target_engineered_M2.csv</code> (not the raw file)
-        so all five candidate targets stay available downstream. Status reflects whether each
-        stage's output file currently exists on disk.
+        Review the transformations used to prepare the modeling dataset. Download each generated CSV when it is available.
     </p>
 </section>
 
@@ -16,12 +14,16 @@
     <div class="pipeline-step {{ 'done' if step.done }}">
         <div class="step-num">{{ loop.index }}</div>
         <div class="step-body">
-            <div class="step-script">{{ step.script }}</div>
+            <div class="pipeline-topic">{{ step.topic }}</div>
+            <div class="step-script">{{ step.name }}</div>
             <div class="step-desc">{{ step.description }}</div>
         </div>
         <div class="step-status">
             {% if step.done %}
             <span class="badge badge-teal">✓ Done</span>
+            {% if step.output_file %}
+            <a class="btn btn-secondary csv-download" href="{{ url_for('dataset_download', filename=step.output_file) }}" download>CSV ↓</a>
+            {% endif %}
             {% else %}
             <span class="badge badge-outline">Not run</span>
             {% endif %}
@@ -30,7 +32,4 @@
     {% endfor %}
 </div>
 
-<div class="info-note teal" style="margin-top:24px;">
-    Run <code>python main.py</code> from the project root to execute every stage in order.
-</div>
 {% endblock %}

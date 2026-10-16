@@ -39,6 +39,21 @@ print("-" * 40)
 print("\nGlucose Summary Statistics:")
 print(df["glucose"].describe())
 
+# Persist a compact audit artifact so the web app can show this stage as complete.
+audit_rows = [
+    {"metric": "rows", "value": len(df)},
+    {"metric": "columns", "value": df.shape[1]},
+    {"metric": "unique_patients", "value": df["user_id"].nunique()},
+    {"metric": "duplicate_rows", "value": int(df.duplicated().sum())},
+]
+audit_rows.extend(
+    {"metric": f"missing_values:{column}", "value": int(count)}
+    for column, count in missing_counts.items()
+)
+audit_path = os.path.join(BASE_DIR, "dataset", "M1_data_quality_audit.csv")
+pd.DataFrame(audit_rows).to_csv(audit_path, index=False)
+print(f"\nSaved data quality audit to: {audit_path}")
+
 # 4. Produce a missingness heatmap
 plt.figure(figsize=(10, 6))
 # cbar=False hides the color bar; yticklabels=False hides row numbers for cleaner visuals;

@@ -2,6 +2,9 @@
 import os
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import (accuracy_score, balanced_accuracy_score, classification_report,
@@ -57,6 +60,44 @@ pd.DataFrame(confusion_matrix(y, predicted, labels=classes), index=classes, colu
     os.path.join(OUTPUT, "confusion_matrix.csv"))
 with open(os.path.join(OUTPUT, "classification_report.txt"), "w") as report:
     report.write(classification_report(y, predicted, zero_division=0))
+
+# Save a visual snapshot of the cross-validation scores and pooled predictions.
+charts = os.path.join(OUTPUT, "charts")
+os.makedirs(charts, exist_ok=True)
+metric_names = ["Accuracy", "Balanced Accuracy", "Precision (weighted)", "Recall (weighted)", "F1 Score (weighted)", "ROC-AUC"]
+available_metrics = [(name, metrics[name]) for name in metric_names if name in metrics and np.isfinite(metrics[name])]
+matrix = confusion_matrix(y, predicted, labels=classes)
+fig, axes = plt.subplots(1, 2, figsize=(13, 5.4), gridspec_kw={"width_ratios": [1.2, 1]})
+fig.patch.set_facecolor("#101c20")
+for axis in axes:
+    axis.set_facecolor("#101c20")
+    axis.tick_params(colors="#dce9e5")
+    for spine in axis.spines.values():
+        spine.set_color("#385057")
+bars = axes[0].barh([name for name, _ in available_metrics], [score * 100 for _, score in available_metrics], color="#75d5bc")
+axes[0].invert_yaxis()
+axes[0].set_xlim(0, 105)
+axes[0].set_xlabel("Score (%)", color="#dce9e5")
+axes[0].set_title("5-fold stratified cross-validation", color="#e7f2ef", loc="left", pad=14, weight="bold")
+axes[0].grid(axis="x", color="#294047", alpha=0.8)
+for bar, (_, score) in zip(bars, available_metrics):
+    axes[0].text(min(score * 100 + 0.8, 100), bar.get_y() + bar.get_height() / 2, f"{score * 100:.2f}%", va="center", color="#dce9e5", fontsize=9)
+image = axes[1].imshow(matrix, cmap="BuGn")
+axes[1].set_title("Pooled confusion matrix", color="#e7f2ef", loc="left", pad=14, weight="bold")
+axes[1].set_xticks(range(len(classes)), classes, rotation=20, ha="right", color="#dce9e5")
+axes[1].set_yticks(range(len(classes)), classes, color="#dce9e5")
+axes[1].set_xlabel("Predicted", color="#dce9e5")
+axes[1].set_ylabel("Actual", color="#dce9e5")
+threshold = matrix.max() / 2 if matrix.size else 0
+for row in range(matrix.shape[0]):
+    for col in range(matrix.shape[1]):
+        axes[1].text(col, row, f"{matrix[row, col]:,}", ha="center", va="center",
+                     color="#ffffff" if matrix[row, col] > threshold else "#102126", fontsize=10, weight="bold")
+fig.colorbar(image, ax=axes[1], fraction=0.046, pad=0.04)
+fig.suptitle("M5 · Model evaluation", x=0.04, ha="left", color="#76d7bd", fontsize=11, weight="bold")
+fig.tight_layout(rect=[0, 0, 1, 0.94])
+fig.savefig(os.path.join(charts, "cross_validation_snapshot.png"), dpi=180, bbox_inches="tight", facecolor=fig.get_facecolor())
+plt.close(fig)
 print("Five-fold stratified Decision Tree evaluation completed.")
 for name, value in metrics.items():
     print(f"{name}: {value:.4f}" if np.isfinite(value) else f"{name}: unavailable")

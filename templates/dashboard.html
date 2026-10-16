@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
+<div class="dashboard-page">
 <section class="hero">
     <span class="eyebrow">Live summary</span>
     <h1>Dashboard</h1>
@@ -12,7 +13,7 @@
     <div class="stat-card"><div class="stat-label">Total Readings</div><div class="stat-value">{{ "{:,}".format(stats.rows) }}</div></div>
     <div class="stat-card"><div class="stat-label">Patients</div><div class="stat-value">{{ stats.patients }}</div></div>
     {% if best_model %}
-    <div class="stat-card"><div class="stat-label">Best Model</div><div class="stat-value" style="font-size:1.3rem;">{{ best_model.name }}</div><div class="stat-sub">{{ best_model.accuracy }}% accuracy</div></div>
+    <div class="stat-card"><div class="stat-label">Best Model</div><div class="stat-value">{{ best_model.name }}</div><div class="stat-sub">{{ best_model.accuracy }}% accuracy</div></div>
     {% endif %}
     {% if balance %}
     <div class="stat-card"><div class="stat-label">Out-of-Range Rate</div><div class="stat-value">
@@ -41,22 +42,38 @@
 </table>
 {% endif %}
 
-<div class="section-title"><h2>Model comparison</h2></div>
-<div class="card-grid">
+<div class="section-title"><h2>Classification models</h2><span class="hint">Saved evaluation scores</span></div>
+<div class="table-scroll">
+<table class="dashboard-model-table">
+    <thead><tr><th>Model</th><th>Family</th><th>Accuracy</th><th>F1 score</th></tr></thead>
+    <tbody>
     {% for m in metrics %}
-    <div class="card">
-        <h3>{{ m.name }}</h3>
-        {% if m.available %}
-        <p>Accuracy: <b>{{ m.accuracy }}%</b> &middot; F1: <b>{{ m.f1_score }}%</b></p>
-        {% else %}
-        <p><span class="badge badge-outline">Not run yet</span></p>
-        {% endif %}
-    </div>
+    <tr>
+        <td><b>{{ m.name }}</b></td><td>{{ m.family }}</td>
+        <td>{{ "%.2f"|format(m.accuracy) }}%</td><td>{{ "%.2f"|format(m.f1) }}%</td>
+    </tr>
     {% endfor %}
+    </tbody>
+</table>
 </div>
+
+{% if regression_models %}
+<div class="section-title"><h2>Glucose forecasting</h2><span class="hint">Next-reading holdout evaluation · lower MAE/RMSE is better</span></div>
+<div class="table-scroll">
+<table class="dashboard-model-table">
+    <thead><tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R²</th><th>MAPE</th></tr></thead>
+    <tbody>
+    {% for model in regression_models %}
+    <tr><td><b>{{ model.name }}</b></td><td>{{ "%.3f"|format(model.mae) }}</td><td>{{ "%.3f"|format(model.rmse) }}</td><td>{{ "%.4f"|format(model.r2) }}</td><td>{{ "%.2f"|format(model.mape) }}%</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endif %}
 
 <div class="cta-row" style="margin-top:28px;">
     <a href="{{ url_for('prediction') }}" class="btn btn-primary">Run a Prediction</a>
     <a href="{{ url_for('visualization') }}" class="btn btn-secondary">View All Charts</a>
+</div>
 </div>
 {% endblock %}

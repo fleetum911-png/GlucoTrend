@@ -8,37 +8,46 @@
 </section>
 
 {% if reports %}
-<div class="library-summary"><div><b>{{ reports|length }}</b><span>generated files</span></div><p>Browse source scripts alongside these artifacts in the <a href="{{ url_for('library') }}">Code &amp; Outputs library →</a></p></div>
+<div class="library-summary"><div><b>{{ reports|length }}</b><span>generated files</span></div><p>Browse every artifact in the <a href="{{ url_for('visualization') }}#outputs">Visualization outputs list →</a></p></div>
 <label class="library-search"><span aria-hidden="true">⌕</span><input type="search" id="report-search" placeholder="Search all output files…" aria-label="Search reports and outputs"></label>
-<table id="reports-table">
-    <thead><tr><th>Artifact</th><th>File</th><th>Type</th><th>Size</th><th></th></tr></thead>
-    <tbody>
-    {% for r in reports %}
-    <tr data-search="{{ (r.label ~ ' ' ~ r.path ~ ' ' ~ r.kind)|lower }}">
-        <td><b>{{ r.label }}</b></td>
-        <td><code>{{ r.path }}</code></td>
-        <td><span class="badge badge-outline">{{ r.kind }}</span></td>
-        <td>{{ r.size_kb }} KB</td>
-        <td><a href="{{ url_for('outputs_file', filename=r.path) }}" class="btn btn-secondary" style="padding:6px 14px; font-size:0.82rem;" {% if r.kind in ['PNG','JPG','JPEG','WEBP','SVG','PDF','TXT'] %}target="_blank"{% endif %}>Open</a></td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+{% for topic, topic_reports in reports|groupby('topic') %}
+<section class="report-topic">
+    <div class="section-title"><h2>{{ topic }}</h2><span class="hint">{{ topic_reports|length }} artifacts</span></div>
+    <table class="reports-table">
+        <thead><tr><th>Artifact</th><th>File</th><th>Type</th><th>Size</th><th></th></tr></thead>
+        <tbody>
+        {% for r in topic_reports %}
+        <tr data-search="{{ (r.label ~ ' ' ~ r.path ~ ' ' ~ r.kind)|lower }}">
+            <td><b>{{ r.label }}</b></td>
+            <td><code>{{ r.path }}</code></td>
+            <td><span class="badge badge-outline">{{ r.kind }}</span></td>
+            <td>{{ r.size_kb }} KB</td>
+            <td><a href="{{ url_for('outputs_file', filename=r.path) }}" class="btn btn-secondary" style="padding:6px 14px; font-size:0.82rem;" {% if r.kind in ['PNG','JPG','JPEG','WEBP','SVG','PDF','TXT'] %}target="_blank"{% endif %}>Open</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endfor %}
 <p class="empty-filter" id="report-empty" hidden>No files match that search.</p>
 <script>
 document.getElementById('report-search').addEventListener('input', (event) => {
     const query = event.target.value.trim().toLowerCase();
     let visible = 0;
-    document.querySelectorAll('#reports-table tbody tr').forEach((row) => {
-        row.hidden = !row.dataset.search.includes(query);
-        if (!row.hidden) visible += 1;
+    document.querySelectorAll('.report-topic').forEach((section) => {
+        let sectionVisible = 0;
+        section.querySelectorAll('tbody tr').forEach((row) => {
+            row.hidden = !row.dataset.search.includes(query);
+            if (!row.hidden) { visible += 1; sectionVisible += 1; }
+        });
+        section.hidden = sectionVisible === 0;
     });
     document.getElementById('report-empty').hidden = visible > 0;
 });
 </script>
 {% else %}
 <div class="stub-note">
-    No reports found yet. Run <code>python main.py</code> to generate the target class-balance
+    No reports found yet. Run the full analysis workflow to generate the target class-balance
     report and each model's metrics/classification reports.
 </div>
 {% endif %}

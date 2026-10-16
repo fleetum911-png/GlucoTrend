@@ -30,16 +30,21 @@ PIPELINE = [
     "clean_embedding_encode_M2.py",
     "clean_minmax_stand_norma_M2.py",
     "final_preprocess_M2.py",              # set TARGET_COLUMN inside this file first
+    "Linear_Regression_M2.py",              # next-reading glucose forecasting
+    "Lasso_Regression_M2.py",               # L1-regularized glucose forecasting
+    "Logistic_Regression_M2.py",            # in-range / out-of-range classification
+    "Multinomial_Regression_M2.py",          # five-class glucose trend prediction
     "Decision_Tree_Classifier_M3.py",      # Module_3: tree-based classifiers
     "Random_Forest_Tree_M3.py",
     "AdaBoost_Classifier_M3.py",
-    "CV_Decision_Tree_All_classifi_Regression_Metrics_M5.py",
     "K_Means_Elbow_Silhouetee_M4.py",      # Module_4: unsupervised clustering
     "Anomaly_Detection_Isolat_Forest_M4.py",
     "PCA_M4.py",
     "t-SNE_M4.py",
     "DBSCAN_Raw_datasetM4.py",
     "Hierarchical_cluste_Agglomerative_divisive_M4.py",
+    "CV_Decision_Tree_All_classifi_Regression_Metrics_M5.py",  # Module_5: model evaluation
+    "ML_Engineering_Lifecycle_Snapshot_M6.py",  # Module_6: serving lifecycle snapshot
 ]
 
 

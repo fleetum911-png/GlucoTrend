@@ -5,7 +5,7 @@ Same 10 routes as the placement_prediction reference app, but wired
 to real data instead of static placeholders:
   - /dataset       reads the raw CSV and computes real stats
   - /visualization builds an image gallery from outputs/ on the fly
-  - /models        reads each M3/M4 script's metrics CSVs
+  - /models        compares all supervised and unsupervised methods from src/
   - /prediction    loads the trained Decision Tree pipeline and
                     actually runs inference on submitted form data
   - /dashboard     aggregates headline numbers from the above
@@ -14,11 +14,15 @@ to real data instead of static placeholders:
 
 import os
 import pickle
+from uuid import uuid4
 
 import pandas as pd
-from flask import Flask, abort, render_template, request, send_from_directory
+from flask import Flask, abort, flash, redirect, render_template, request, send_from_directory, url_for
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "glucotrend-local-session")
+app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 
 # ================================================================
 # PATHS
@@ -26,6 +30,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATASET_DIR = os.path.join(BASE_DIR, "dataset")
 OUTPUTS_DIR = os.path.join(BASE_DIR, "outputs")
+UPLOADS_DIR = os.path.join(DATASET_DIR, "uploads")
 RAW_CSV = os.path.join(DATASET_DIR, "GlucoBench_benchmark_dataset_RAW.csv")
 TARGET_ENGINEERED_CSV = os.path.join(DATASET_DIR, "target_engineered_M2.csv")
 MODEL_PATH = os.path.join(OUTPUTS_DIR, "Decision_Tree_Classifier_M3_Outputs", "model", "decision_tree_model.pkl")
@@ -113,6 +118,16 @@ MODEL_DEFS = [
     ("Random Forest", "Random_Forest_Tree_M3_Outputs", "random_forest_metrics.csv"),
     ("AdaBoost", "AdaBoost_Classifier_M3_Outputs", "adaboost_metrics.csv"),
 ]
+ML_TOPIC_ORDER = {
+    "M1 · Data lifecycle & exploration": 1,
+    "EDA · Exploratory data analysis": 2,
+    "M2 · Targets & feature preparation": 3,
+    "M2 · Supervised linear models": 4,
+    "M3 · Tree-based models": 5,
+    "M4 · Unsupervised learning": 6,
+    "M5 · Model evaluation": 7,
+    "M6 · ML engineering & other artifacts": 8,
+}
 
 
 # ================================================================
@@ -161,6 +176,165 @@ def get_model_metrics():
     return results
 
 
+def _read_first_row(relative_path):
+    path = os.path.join(OUTPUTS_DIR, relative_path)
+    if not os.path.isfile(path):
+        return None
+    frame = pd.read_csv(path)
+    return frame.iloc[0].to_dict() if not frame.empty else None
+
+
+def _classifier_scores(relative_path):
+    row = _read_first_row(relative_path)
+    scores = {"accuracy": None, "precision": None, "recall": None, "f1": None}
+    if not row:
+        return scores
+    metric_file = os.path.join(OUTPUTS_DIR, relative_path)
+    for _, metric in pd.read_csv(metric_file).iterrows():
+        key = str(metric.get("Metric", "")).lower()
+        value = metric.get("Percentage")
+        if pd.isna(value) and not pd.isna(metric.get("Value")):
+            value = float(metric["Value"]) * 100
+        if pd.isna(value):
+            continue
+        if key == "accuracy":
+            scores["accuracy"] = float(value)
+        elif key.startswith("precision"):
+            scores["precision"] = float(value)
+        elif key.startswith("recall"):
+            scores["recall"] = float(value)
+        elif key.startswith("f1"):
+            scores["f1"] = float(value)
+    return scores
+
+
+def _regression_scores(relative_path):
+    row = _read_first_row(relative_path)
+    if not row:
+        return {"mae": None, "rmse": None, "r2": None, "mape": None}
+    metric_path = os.path.join(OUTPUTS_DIR, relative_path)
+    metrics = pd.read_csv(metric_path)
+    values = {str(metric["Metric"]).lower(): float(metric["Value"])
+              for _, metric in metrics.iterrows() if pd.notna(metric.get("Value"))}
+    return {"mae": values.get("mae"), "rmse": values.get("rmse"),
+            "r2": values.get("r2"), "mape": values.get("mape")}
+
+
+def get_model_showcase():
+    """Return every algorithm implemented in src with its saved evaluation evidence."""
+    regression_definitions = [
+        ("Linear Regression", "Supervised regression", "Linear baseline forecasting the next glucose reading from current and historical sensor features.", "Linear_Regression_M2_Outputs/metrics/linear_regression_metrics.csv", "Linear_Regression_M2_Outputs/charts/regression_diagnostics.png"),
+        ("Lasso Regression", "Regularized regression", "L1-regularized glucose forecast that can shrink less useful feature coefficients toward zero.", "Lasso_Regression_M2_Outputs/metrics/lasso_regression_metrics.csv", "Lasso_Regression_M2_Outputs/charts/regression_diagnostics.png"),
+    ]
+    catalog = []
+    for name, family, description, metrics_file, artifact in regression_definitions:
+        scores = _regression_scores(metrics_file)
+        catalog.append({"name": name, "family": family, "description": description, "module": "M2",
+                        "accuracy": None, "precision": None, "recall": None, "f1": None,
+                        "cluster_accuracy": None, "silhouette": None, "clusters": None, "inertia": None,
+                        "anomaly_rate": None, "variance_2d": None, "sample_size": None, **scores,
+                        "evaluation_data": "Participant holdout", "status": "Evaluated" if scores["mae"] is not None else "Not run",
+                        "artifact": artifact})
+
+    for name, description, output_key, metrics_filename, split_description in [
+        ("Logistic Regression", "Logistic classifier for in-range versus out-of-range readings using historical features.", "Logistic_Regression_M2_Outputs", "logistic_regression_metrics.csv", "Stratified row holdout"),
+        ("Multinomial Logistic Regression", "Multinomial logistic model for five glucose trend-direction classes.", "Multinomial_Regression_M2_Outputs", "multinomial_regression_metrics.csv", "Participant holdout"),
+    ]:
+        scores = _classifier_scores(f"{output_key}/metrics/{metrics_filename}")
+        catalog.append({"name": name, "family": "Supervised classification", "description": description, "module": "M2",
+                        **scores, "cluster_accuracy": None, "silhouette": None, "clusters": None, "inertia": None,
+                        "anomaly_rate": None, "variance_2d": None, "sample_size": None,
+                        "mae": None, "rmse": None, "r2": None, "mape": None,
+                        "evaluation_data": split_description,
+                        "status": "Evaluated" if any(value is not None for value in scores.values()) else "Not run",
+                        "artifact": f"{output_key}/charts/classification_metrics.png"})
+
+    definitions = [
+        ("Decision Tree", "Supervised classification", "An interpretable tree that predicts the glucose range from the prepared features.", "M3", "Decision_Tree_Classifier_M3_Outputs/metrics/decision_tree_metrics.csv", "Decision_Tree_Classifier_M3_Outputs/decision_tree/decision_tree_diagram.png"),
+        ("Random Forest", "Supervised classification", "An ensemble of randomized decision trees that combines their predictions.", "M3", "Random_Forest_Tree_M3_Outputs/metrics/random_forest_metrics.csv", "Random_Forest_Tree_M3_Outputs/random_forest_tree/random_forest_first_tree.png"),
+        ("AdaBoost", "Supervised classification", "A sequence of shallow trees that focuses on observations missed by earlier rounds.", "M3", "AdaBoost_Classifier_M3_Outputs/metrics/adaboost_metrics.csv", "AdaBoost_Classifier_M3_Outputs/adaboost_base_tree/adaboost_base_tree.png"),
+    ]
+    for name, family, description, module, metrics_file, artifact in definitions:
+        scores = _classifier_scores(metrics_file)
+        catalog.append({"name": name, "family": family, "description": description, "module": module,
+                        **scores, "cluster_accuracy": None, "silhouette": None, "clusters": None,
+                        "inertia": None, "anomaly_rate": None, "variance_2d": None,
+                        "mae": None, "rmse": None, "r2": None, "mape": None,
+                        "evaluation_data": "5-fold CV" if "CV" in name else "Holdout",
+                        "sample_size": None, "status": "Evaluated" if any(v is not None for v in scores.values()) else "Not run",
+                        "artifact": artifact})
+
+    def add_cluster(name, description, metrics_path, artifact, *, matching_accuracy=None, inertia=None):
+        row = _read_first_row(metrics_path)
+        catalog.append({"name": name, "family": "Clustering", "description": description, "module": "M4",
+                        "accuracy": None, "precision": None, "recall": None, "f1": None,
+                        "cluster_accuracy": matching_accuracy, "silhouette": float(row["silhouette"] if "silhouette" in row else row["Silhouette_Score"]) if row else None,
+                        "clusters": int(row["clusters"] if "clusters" in row else row["Number_of_Clusters"]) if row else None,
+                        "inertia": float(inertia if inertia is not None else row["Inertia"]) if row and (inertia is not None or "Inertia" in row) else None,
+                        "anomaly_rate": None, "variance_2d": None, "sample_size": int(row.get("sample_records", 0)) or None if row else None,
+                        "mae": None, "rmse": None, "r2": None, "mape": None, "evaluation_data": None,
+                        "status": "Evaluated" if row else "Not run", "artifact": artifact})
+
+    accuracy_path = os.path.join(OUTPUTS_DIR, "K_Means_K++Means_Elbow_Silhoute_M4_Outputs/Accuracy/glucose_range_cluster_matching_accuracy.csv")
+    matching = {}
+    if os.path.isfile(accuracy_path):
+        accuracy_frame = pd.read_csv(accuracy_path)
+        matching = {str(row["Method"]): float(row["Accuracy_Percentage"]) for _, row in accuracy_frame.iterrows()}
+    add_cluster("K-Means", "Partitions readings into a selected number of groups by minimizing within-cluster distance.",
+                "K_Means_K++Means_Elbow_Silhoute_M4_Outputs/KMeans/kmeans_metrics.csv",
+                "K_Means_K++Means_Elbow_Silhoute_M4_Outputs/KMeans/kmeans_PCA_clustering.png",
+                matching_accuracy=matching.get("K-Means"))
+    add_cluster("K-Means++", "K-Means with spread-out centroid initialization to improve starting positions.",
+                "K_Means_K++Means_Elbow_Silhoute_M4_Outputs/KMeansPlusPlus/kmeans_plus_plus_metrics.csv",
+                "K_Means_K++Means_Elbow_Silhoute_M4_Outputs/KMeansPlusPlus/kmeans_plus_plus_PCA_clustering.png",
+                matching_accuracy=matching.get("K-Means++"))
+    add_cluster("Agglomerative clustering", "Builds nested groups by repeatedly merging nearby clusters.",
+                "GlucoTrend_Module_4_Outputs/hierarchical_metrics.csv", "GlucoTrend_Module_4_Outputs/hierarchical_clusters.png")
+    add_cluster("Bisecting K-Means", "Divisive hierarchical clustering that recursively splits groups with K-Means.",
+                "GlucoTrend_Module_4_Outputs/divisive_metrics.csv", "GlucoTrend_Module_4_Outputs/divisive_clusters.png")
+    add_cluster("DBSCAN", "Finds dense groups without a preset cluster count and labels isolated points as noise.",
+                "GlucoTrend_Module_4_Outputs/dbscan_metrics.csv", "GlucoTrend_Module_4_Outputs/dbscan_clusters.png")
+
+    anomaly = _read_first_row("GlucoTrend_Module_4_Outputs/isolation_forest_summary.csv")
+    catalog.append({"name": "Isolation Forest", "family": "Anomaly detection", "description": "Flags unusual readings by isolating observations that are easier to separate from the rest.", "module": "M4",
+                    "accuracy": None, "precision": None, "recall": None, "f1": None, "cluster_accuracy": None,
+                    "silhouette": None, "clusters": None, "inertia": None,
+                    "anomaly_rate": float(anomaly["anomaly_rate_pct"]) if anomaly else None, "variance_2d": None,
+                    "mae": None, "rmse": None, "r2": None, "mape": None, "evaluation_data": None,
+                    "sample_size": int(anomaly["records"]) if anomaly else None,
+                    "status": "Evaluated" if anomaly else "Not run", "artifact": "GlucoTrend_Module_4_Outputs/isolation_forest_counts.png"})
+
+    variance_path = os.path.join(OUTPUTS_DIR, "GlucoTrend_Module_4_Outputs/pca_explained_variance.csv")
+    variance_2d = None
+    if os.path.isfile(variance_path):
+        variance_frame = pd.read_csv(variance_path)
+        if not variance_frame.empty:
+            variance_2d = float(variance_frame.iloc[min(1, len(variance_frame) - 1)]["cumulative_variance"] * 100)
+    catalog.append({"name": "PCA", "family": "Dimensionality reduction", "description": "Projects standardized features into principal components and reports captured variance.", "module": "M4",
+                    "accuracy": None, "precision": None, "recall": None, "f1": None, "cluster_accuracy": None,
+                    "silhouette": None, "clusters": None, "inertia": None, "anomaly_rate": None,
+                    "variance_2d": variance_2d, "sample_size": None, "mae": None, "rmse": None, "r2": None, "mape": None, "evaluation_data": None,
+                    "status": "Evaluated" if variance_2d is not None else "Not run",
+                    "artifact": "GlucoTrend_Module_4_Outputs/pca_cumulative_variance.png"})
+
+    tsne_path = os.path.join(OUTPUTS_DIR, "GlucoTrend_Module_4_Outputs/tsne_embedding.csv")
+    tsne_rows = len(pd.read_csv(tsne_path)) if os.path.isfile(tsne_path) else None
+    catalog.append({"name": "t-SNE", "family": "Dimensionality reduction", "description": "Creates a two-dimensional embedding for visual exploration; the project does not export a quality score.", "module": "M4",
+                    "accuracy": None, "precision": None, "recall": None, "f1": None, "cluster_accuracy": None,
+                    "silhouette": None, "clusters": None, "inertia": None, "anomaly_rate": None,
+                    "variance_2d": None, "sample_size": tsne_rows, "mae": None, "rmse": None, "r2": None, "mape": None, "evaluation_data": None,
+                    "status": "Embedding available" if tsne_rows else "Not run",
+                    "artifact": "GlucoTrend_Module_4_Outputs/tsne_glucose_embedding.png"})
+    cv_scores = _classifier_scores("CV_Decision_Tree_M5_Outputs/cross_validation_metrics.csv")
+    catalog.append({"name": "Decision Tree · 5-fold CV", "family": "Model evaluation", "description": "The decision tree evaluated with stratified five-fold cross-validation.", "module": "M5",
+                    **cv_scores, "cluster_accuracy": None, "silhouette": None, "clusters": None, "inertia": None,
+                    "anomaly_rate": None, "variance_2d": None, "sample_size": None,
+                    "mae": None, "rmse": None, "r2": None, "mape": None, "evaluation_data": "5-fold CV",
+                    "status": "Evaluated" if any(value is not None for value in cv_scores.values()) else "Not run",
+                    "artifact": "CV_Decision_Tree_M5_Outputs/confusion_matrix.csv"})
+    return catalog
+
+
 def list_images(*subpath_parts):
     """Return web-servable relative paths for PNG files under outputs."""
     folder = os.path.join(OUTPUTS_DIR, *subpath_parts)
@@ -174,10 +348,28 @@ def list_images(*subpath_parts):
                 rel_path = os.path.relpath(os.path.join(root, fname), OUTPUTS_DIR).replace(os.sep, "/")
                 images.append({
                     "path": rel_path,
-                    "group": os.path.dirname(rel_path).replace("_", " ").replace("/", " / "),
+                    "group": artifact_topic(rel_path),
                     "name": fname.rsplit(".", 1)[0].replace("_", " ").title(),
                 })
     return images
+
+
+def artifact_topic(path):
+    """Assign generated artifacts to the course module they support."""
+    value = path.lower()
+    if "boxplots_correlation" in value:
+        return "EDA · Exploratory data analysis"
+    if "cv_decision_tree" in value or "cross_validation" in value:
+        return "M5 · Model evaluation"
+    if "_m2_outputs/" in value:
+        return "M2 · Supervised linear models"
+    if any(term in value for term in ("k_means", "glucotrend_module_4", "dbscan", "pca", "tsne", "hierarchical", "isolation")):
+        return "M4 · Unsupervised learning"
+    if any(term in value for term in ("decision_tree", "random_forest", "adaboost")):
+        return "M3 · Tree-based models"
+    if "target_variable" in value or "target_class" in value:
+        return "M2 · Targets & feature preparation"
+    return "M6 · ML engineering & other artifacts"
 
 
 def list_reports():
@@ -192,27 +384,11 @@ def list_reports():
             reports.append({
                 "label": filename.rsplit(".", 1)[0].replace("_", " ").title(),
                 "path": rel_path,
+                "topic": artifact_topic(rel_path),
                 "kind": filename.rsplit(".", 1)[-1].upper() if "." in filename else "FILE",
                 "size_kb": round(os.path.getsize(full_path) / 1024, 1),
             })
-    return reports
-
-
-def list_source_files():
-    """List application entry points and every project Python source file."""
-    files = []
-    for name in ("app.py", "main.py"):
-        full_path = os.path.join(BASE_DIR, name)
-        if os.path.isfile(full_path):
-            files.append({"path": name, "name": name, "size_kb": round(os.path.getsize(full_path) / 1024, 1)})
-    for root, dirs, names in os.walk(os.path.join(BASE_DIR, "src")):
-        dirs.sort()
-        for name in sorted(names):
-            if name.endswith(".py"):
-                full_path = os.path.join(root, name)
-                rel_path = os.path.relpath(full_path, BASE_DIR).replace(os.sep, "/")
-                files.append({"path": rel_path, "name": name, "size_kb": round(os.path.getsize(full_path) / 1024, 1)})
-    return files
+    return sorted(reports, key=lambda report: (ML_TOPIC_ORDER[report["topic"]], report["path"].lower()))
 
 
 # ================================================================
@@ -222,6 +398,34 @@ def list_source_files():
 def home():
     stats = get_dataset_stats()
     return render_template("home.html", stats=stats)
+
+
+@app.route("/upload-dataset", methods=["POST"])
+def upload_dataset():
+    uploaded = request.files.get("dataset_file")
+    if not uploaded or not uploaded.filename:
+        flash("Choose a CSV file to upload.", "error")
+        return redirect(url_for("home") + "#dataset-upload")
+    original_name = secure_filename(uploaded.filename)
+    if not original_name.lower().endswith(".csv"):
+        flash("Please upload a CSV file.", "error")
+        return redirect(url_for("home") + "#dataset-upload")
+
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
+    saved_name = f"{uuid4().hex[:10]}_{original_name}"
+    destination = os.path.join(UPLOADS_DIR, saved_name)
+    uploaded.save(destination)
+    try:
+        preview = pd.read_csv(destination, nrows=5)
+        if preview.empty or len(preview.columns) == 0:
+            raise ValueError("The CSV has no data rows or columns.")
+    except Exception:
+        os.remove(destination)
+        flash("That file could not be read as a non-empty CSV. Please check it and try again.", "error")
+        return redirect(url_for("home") + "#dataset-upload")
+
+    flash(f"{original_name} uploaded successfully ({len(preview.columns)} columns detected). Saved in dataset/uploads/.", "success")
+    return redirect(url_for("home") + "#dataset-upload")
 
 
 @app.route("/about")
@@ -238,17 +442,15 @@ def dataset():
 @app.route("/preprocessing")
 def preprocessing():
     stages = [
-        ("Dataset_Load_identify_missing_values_M1.py", "Load raw data, audit missing values & duplicates"),
-        ("Correlation_Matrix_heatmap_boxplots_M1.py", "Correlation heatmap + feature-vs-target boxplots"),
-        ("target_variable_engineering_M2.py", "Build all 5 candidate target variables"),
-        ("clean_missing_imputer_M2.py", "Deletion / mean / median / forward-fill / indicator"),
-        ("clean_label_encode_M2.py", "Label encoding for categorical predictors"),
-        ("clean_one_hot_encod_M2.py", "One-hot encoding"),
-        ("clean_ordinal_encod_M2.py", "Ordinal encoding (exercise_intensity)"),
-        ("clean_target_encode_M2.py", "Mean-target encoding"),
-        ("clean_embedding_encode_M2.py", "Pandas-based embedding encoding"),
-        ("clean_minmax_stand_norma_M2.py", "Standardization / min-max / L2 normalization"),
-        ("final_preprocess_M2.py", "Assemble the modeling-ready dataset"),
+        ("target_variable_engineering_M2.py", "M2 · Feature preparation", "Build five candidate target variables"),
+        ("clean_missing_imputer_M2.py", "M2 · Feature preparation", "Deletion, mean/median imputation, forward fill, and indicators"),
+        ("clean_label_encode_M2.py", "M2 · Feature preparation", "Encode categorical predictors with labels"),
+        ("clean_one_hot_encod_M2.py", "M2 · Feature preparation", "One-hot encode categorical predictors"),
+        ("clean_ordinal_encod_M2.py", "M2 · Feature preparation", "Ordinal encode exercise intensity"),
+        ("clean_target_encode_M2.py", "M2 · Feature preparation", "Encode categories using target means"),
+        ("clean_embedding_encode_M2.py", "M2 · Feature preparation", "Create compact numeric category representations"),
+        ("clean_minmax_stand_norma_M2.py", "M2 · Feature preparation", "Standardize, min-max scale, and normalize features"),
+        ("final_preprocess_M2.py", "M2 · Feature preparation", "Assemble the modeling-ready dataset"),
     ]
     output_files = {
         "target_variable_engineering_M2.py": "target_engineered_M2.csv",
@@ -262,25 +464,31 @@ def preprocessing():
         "final_preprocess_M2.py": "final_preprocess_M2.csv",
     }
     pipeline = []
-    for script, description in stages:
+    for script, topic, description in stages:
         output_file = output_files.get(script)
-        done = output_file is not None and os.path.exists(os.path.join(DATASET_DIR, output_file))
-        pipeline.append({"script": script, "description": description, "done": done})
+        status_path = os.path.join(DATASET_DIR, output_file) if output_file else None
+        done = status_path is not None and os.path.exists(status_path)
+        pipeline.append({"name": script.removesuffix(".py").replace("_", " "), "topic": topic,
+                         "description": description, "done": done, "output_file": output_file if done else None})
     return render_template("preprocessing.html", pipeline=pipeline)
 
 
 @app.route("/visualization")
 def visualization():
     gallery = {}
-    for image in list_images():
+    images = sorted(list_images(), key=lambda image: (ML_TOPIC_ORDER[image["group"]], image["path"].lower()))
+    for image in images:
         gallery.setdefault(image["group"] or "Project outputs", []).append(image)
-    return render_template("visualization.html", gallery=gallery)
+    outputs = list_reports()
+    output_groups = {}
+    for output in outputs:
+        output_groups.setdefault(output["topic"], []).append(output)
+    return render_template("visualization.html", gallery=gallery, outputs=outputs, output_groups=output_groups)
 
 
 @app.route("/models")
 def models():
-    metrics = get_model_metrics()
-    return render_template("models.html", metrics=metrics)
+    return render_template("models.html", models=get_model_showcase())
 
 
 @app.route("/prediction", methods=["GET", "POST"])
@@ -340,17 +548,16 @@ def dashboard():
     balance = get_target_balance()
     metrics = get_model_metrics()
     best_model = max((m for m in metrics if m["available"]), key=lambda m: m.get("accuracy", 0), default=None)
-    return render_template("dashboard.html", stats=stats, balance=balance, metrics=metrics, best_model=best_model)
+    showcase = get_model_showcase()
+    classification_models = [model for model in showcase if model["accuracy"] is not None and model["module"] in {"M2", "M3"}]
+    regression_models = [model for model in showcase if model["mae"] is not None]
+    return render_template("dashboard.html", stats=stats, balance=balance, metrics=classification_models,
+                           regression_models=regression_models, best_model=best_model)
 
 
 @app.route("/reports")
 def reports():
     return render_template("reports.html", reports=list_reports())
-
-
-@app.route("/library")
-def library():
-    return render_template("library.html", source_files=list_source_files(), output_files=list_reports())
 
 
 @app.route("/contact")
@@ -360,29 +567,27 @@ def contact():
 
 @app.route("/outputs/<path:filename>")
 def outputs_file(filename):
-    """Serve generated artifacts; keep serialized model files as downloads."""
-    return send_from_directory(OUTPUTS_DIR, filename, as_attachment=filename.lower().endswith((".pkl", ".pickle", ".joblib")))
+    """Serve generated artifacts, downloading data and model files."""
+    force_download = request.args.get("download") == "1"
+    return send_from_directory(
+        OUTPUTS_DIR, filename,
+        as_attachment=force_download or filename.lower().endswith((".csv", ".txt", ".pkl", ".pickle", ".joblib")),
+    )
 
 
-@app.route("/source/<path:filename>")
-def source_file(filename):
-    """Display a project source file in the browser."""
-    if not (filename in {"app.py", "main.py"} or (filename.startswith("src/") and filename.endswith(".py"))):
+@app.route("/dataset-download/<path:filename>")
+def dataset_download(filename):
+    """Download a generated dataset CSV by its safe basename."""
+    allowed = {
+        "GlucoBench_benchmark_dataset_RAW.csv", "M1_data_quality_audit.csv", "target_engineered_M2.csv",
+        "clean_missing_imputer_M2.csv", "clean_label_encode_M2.csv",
+        "clean_one_hot_encoding_M2.csv", "clean_ordinal_encode_M2.csv",
+        "clean_target_encode_M2.csv", "clean_embedded_encode_M2.csv",
+        "clean_minmax_stand_norma_M2.csv", "final_preprocess_M2.csv",
+    }
+    if filename not in allowed:
         abort(404)
-    source_path = os.path.join(BASE_DIR, filename)
-    if not os.path.isfile(source_path):
-        abort(404)
-    with open(source_path, encoding="utf-8") as source_file_handle:
-        source_code = source_file_handle.read()
-    return render_template("source.html", filename=filename, source_code=source_code)
-
-
-@app.route("/source-download/<path:filename>")
-def source_download(filename):
-    """Download a project Python source file."""
-    if not (filename in {"app.py", "main.py"} or (filename.startswith("src/") and filename.endswith(".py"))):
-        abort(404)
-    return send_from_directory(BASE_DIR, filename, as_attachment=True)
+    return send_from_directory(DATASET_DIR, filename, as_attachment=True)
 
 
 if __name__ == "__main__":

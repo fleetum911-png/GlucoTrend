@@ -2,104 +2,85 @@
 {% block title %}Models{% endblock %}
 {% block content %}
 <section class="hero">
-    <span class="eyebrow">Module 3 &middot; glucose range classification</span>
-    <h1>Compare the Models</h1>
-    <p class="lede">Compare Decision Tree, Random Forest, and AdaBoost using the saved evaluation metrics. Choose a metric to reorder and compare the available models.</p>
+    <span class="eyebrow">16 methods · regression, classification &amp; unsupervised</span>
+    <h1>Model comparison</h1>
+    <p class="lede">Browse every model and analysis method implemented in the project, with the evaluation measures saved for each one. Metrics are shown only where they apply.</p>
 </section>
 
-{% set available_models = metrics|selectattr('available')|list %}
-{% if available_models %}
-<section class="comparison-panel" aria-labelledby="comparison-heading">
+<section class="comparison-panel model-comparison" aria-labelledby="model-comparison-heading">
     <div class="comparison-heading">
         <div>
-            <h2 id="comparison-heading">Metric comparison</h2>
-            <p>Bars show each model's score as a percentage. Select a metric to compare.</p>
+            <h2 id="model-comparison-heading">Evaluation comparison</h2>
+            <p>Classification scores, clustering quality, anomaly rate, and explained variance use different scales and should be read within their method family.</p>
         </div>
-        <label class="metric-picker">Compare by
-            <select id="metric-selector" aria-label="Metric to compare">
-                <option value="accuracy">Accuracy</option>
-                <option value="precision">Precision</option>
-                <option value="recall">Recall</option>
-                <option value="f1_score">F1 Score</option>
-            </select>
-        </label>
     </div>
-    <div id="comparison-chart" class="comparison-chart" aria-live="polite">
-        {% for m in available_models %}
-        <div class="comparison-row" data-model="{{ m.name }}" data-accuracy="{{ m.accuracy }}" data-precision="{{ m.precision }}" data-recall="{{ m.recall }}" data-f1_score="{{ m.f1_score }}">
-            <div class="comparison-label"><span class="comparison-rank"></span><b>{{ m.name }}</b><span class="comparison-score">{{ m.accuracy }}%</span></div>
-            <div class="metric-bar-track"><div class="metric-bar-fill comparison-fill" style="width:{{ m.accuracy }}%"></div></div>
-        </div>
-        {% endfor %}
+    <div class="table-scroll">
+        <table class="model-comparison-table">
+            <thead>
+                <tr>
+                    <th>Model / method</th><th>Family</th><th>Primary result</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>MAE</th><th>RMSE</th><th>R²</th><th>MAPE</th>
+                    <th>Cluster match</th><th>Silhouette</th><th>Clusters</th><th>Inertia</th><th>Anomaly rate</th><th>Variance · first 2 PCs</th><th>Evaluation data</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for model in models %}
+                <tr>
+                    <td><b>{{ model.name }}</b><small class="table-module">{{ model.module }}</small></td>
+                    <td>{{ model.family }}</td>
+                    <td class="primary-result">
+                        {% if model.accuracy is not none %}{{ "%.2f"|format(model.accuracy) }}% accuracy · F1 {{ "%.2f"|format(model.f1) }}%
+                        {% elif model.mae is not none %}MAE {{ "%.3f"|format(model.mae) }} · R² {{ "%.4f"|format(model.r2) }}
+                        {% elif model.cluster_accuracy is not none %}{{ "%.2f"|format(model.cluster_accuracy) }}% match · silhouette {{ "%.3f"|format(model.silhouette) }} · k={{ model.clusters }}
+                        {% elif model.silhouette is not none %}Silhouette {{ "%.3f"|format(model.silhouette) }} · {{ model.clusters }} clusters
+                        {% elif model.anomaly_rate is not none %}{{ "%.2f"|format(model.anomaly_rate) }}% flagged · {{ "{:,}".format(model.sample_size) }} readings
+                        {% elif model.variance_2d is not none %}{{ "%.2f"|format(model.variance_2d) }}% variance · first 2 PCs
+                        {% elif model.sample_size %}{{ "{:,}".format(model.sample_size) }} rows embedded
+                        {% else %}<span class="not-applicable">NA</span>{% endif %}
+                    </td>
+                    <td>{% if model.accuracy is not none %}{{ "%.2f"|format(model.accuracy) }}%{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.precision is not none %}{{ "%.2f"|format(model.precision) }}%{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.recall is not none %}{{ "%.2f"|format(model.recall) }}%{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.f1 is not none %}{{ "%.2f"|format(model.f1) }}%{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.mae is not none %}{{ "%.3f"|format(model.mae) }}{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.rmse is not none %}{{ "%.3f"|format(model.rmse) }}{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.r2 is not none %}{{ "%.4f"|format(model.r2) }}{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.mape is not none %}{{ "%.2f"|format(model.mape) }}%{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.cluster_accuracy is not none %}{{ "%.2f"|format(model.cluster_accuracy) }}%{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.silhouette is not none %}{{ "%.3f"|format(model.silhouette) }}{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.clusters is not none %}{{ model.clusters }}{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.inertia is not none %}{{ "{:,.2f}".format(model.inertia) }}{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.anomaly_rate is not none %}{{ "%.2f"|format(model.anomaly_rate) }}%{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.variance_2d is not none %}{{ "%.2f"|format(model.variance_2d) }}%{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                    <td>{% if model.evaluation_data %}{{ model.evaluation_data }}{% elif model.sample_size %}{{ "{:,}".format(model.sample_size) }} rows{% elif model.accuracy is not none %}Holdout{% else %}<span class="not-applicable">NA</span>{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <p class="comparison-winner" id="comparison-winner"></p>
+    <p class="comparison-note"><b>Metric guide:</b> Classification rows use weighted precision, recall, and F1. Regression rows predict the next glucose reading; lower MAE/RMSE/MAPE and higher R² are better. Cluster match is post-hoc label-matched accuracy for K-Means and K-Means++ only. Silhouette is higher when clusters are more distinct; inertia is meaningful only for K-Means. PCA shows cumulative variance in its first two components. NA means a metric does not apply or no score was saved.</p>
 </section>
 
-<div class="section-title"><h2>Evaluation metrics</h2><span class="hint">Read from outputs/*/metrics/*.csv</span></div>
-<div class="table-scroll">
-<table id="model-metrics-table">
-    <thead><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1 Score</th></tr></thead>
-    <tbody>
-    {% for m in metrics %}
-    <tr data-model-row="{{ m.name }}">
-        <td><b>{{ m.name }}</b></td>
-        {% if m.available %}
-        <td>{{ m.accuracy }}%</td><td>{{ m.precision }}%</td><td>{{ m.recall }}%</td><td>{{ m.f1_score }}%</td>
-        {% else %}
-        <td colspan="4"><span class="badge badge-outline">Not run yet</span></td>
-        {% endif %}
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-</div>
-{% else %}
-<div class="info-note">No classifier metrics are available yet. Run the Module 3 scripts to create comparison results.</div>
-{% endif %}
-
-<div class="section-title"><h2>Model details</h2></div>
-<div class="card-grid">
-    <details class="card model-detail"><summary><h3>Decision Tree</h3><span class="detail-toggle">View details</span></summary><p>Single interpretable tree. Useful for tracing decisions through feature splits.</p><a href="{{ url_for('outputs_file', filename='Decision_Tree_Classifier_M3_Outputs/decision_tree/decision_tree_diagram.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View Tree Diagram</a></details>
-    <details class="card model-detail"><summary><h3>Random Forest</h3><span class="detail-toggle">View details</span></summary><p>Bagged decision trees with feature subsampling to combine multiple views of the data.</p><a href="{{ url_for('outputs_file', filename='Random_Forest_Tree_M3_Outputs/random_forest_tree/random_forest_first_tree.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View First Tree</a></details>
-    <details class="card model-detail"><summary><h3>AdaBoost</h3><span class="detail-toggle">View details</span></summary><p>Boosted shallow trees, where each round focuses more on examples missed by earlier rounds.</p><a href="{{ url_for('outputs_file', filename='AdaBoost_Classifier_M3_Outputs/adaboost_base_tree/adaboost_base_tree.png') }}" class="btn btn-secondary" style="margin-top:12px; padding:8px 16px; font-size:0.85rem;">View Base Tree</a></details>
+<div class="section-title"><h2>Download each method’s output</h2><span class="hint">{{ models|length }} downloadable result files</span></div>
+<div class="method-grid model-showcase-grid">
+{% for model in models %}
+    <article class="method-card model-showcase-card">
+        <span>{{ model.module }} · {{ model.family }}</span>
+        <h3>{{ model.name }}</h3>
+        <p>{{ model.description }}</p>
+        <div class="model-scoreline">
+        {% if model.accuracy is not none %}<b>{{ "%.2f"|format(model.accuracy) }}% accuracy</b>
+        {% elif model.mae is not none %}<b>MAE {{ "%.3f"|format(model.mae) }} mg/dL · R² {{ "%.4f"|format(model.r2) }}</b>
+        {% elif model.silhouette is not none %}<b>{{ "%.3f"|format(model.silhouette) }} silhouette</b>
+        {% elif model.cluster_accuracy is not none %}<b>{{ "%.2f"|format(model.cluster_accuracy) }}% cluster match</b>
+        {% elif model.anomaly_rate is not none %}<b>{{ "%.2f"|format(model.anomaly_rate) }}% flagged</b>
+        {% elif model.variance_2d is not none %}<b>{{ "%.2f"|format(model.variance_2d) }}% variance in 2 PCs</b>
+        {% elif model.sample_size %}<b>{{ "{:,}".format(model.sample_size) }} rows embedded</b>
+        {% else %}<b>{{ model.status }}</b>{% endif %}
+        </div>
+        <a class="btn btn-secondary model-download" href="{{ url_for('outputs_file', filename=model.artifact, download=1) }}" download="{{ model.artifact.split('/')[-1] }}">Download output file ↓</a>
+    </article>
+{% endfor %}
 </div>
 
-<div class="section-title"><h2>Other methods in the project</h2><span class="hint">Modules 4–5 · scripts and artifacts in the library</span></div>
-<div class="method-grid">
-    <article class="method-card"><span>M4 · PARTITIONING</span><h3>K-Means &amp; K-Means++</h3><p>Assign readings to a chosen number of clusters. K-Means++ spreads initial centers to improve initialization.</p><a href="{{ url_for('library') }}#generated-outputs">Browse cluster outputs →</a></article>
-    <article class="method-card"><span>M4 · DENSITY</span><h3>DBSCAN</h3><p>Finds dense groups and marks isolated points as noise, without requiring a fixed cluster count.</p><a href="{{ url_for('library') }}#generated-outputs">Browse DBSCAN outputs →</a></article>
-    <article class="method-card"><span>M4 · HIERARCHICAL</span><h3>Agglomerative &amp; divisive</h3><p>Explore nested grouping by building clusters bottom-up or splitting them into smaller groups.</p><a href="{{ url_for('library') }}#generated-outputs">Browse hierarchy outputs →</a></article>
-    <article class="method-card"><span>M4 · DIMENSION REDUCTION</span><h3>PCA &amp; t-SNE</h3><p>Create lower-dimensional representations for visual inspection of structure and variance.</p><a href="{{ url_for('library') }}#generated-outputs">Browse embeddings →</a></article>
-    <article class="method-card"><span>M4 · OUTLIERS</span><h3>Isolation Forest</h3><p>Identify observations that are easier to isolate from the rest of the feature space.</p><a href="{{ url_for('library') }}#generated-outputs">Browse anomaly results →</a></article>
-    <article class="method-card"><span>M5 · VALIDATION</span><h3>Cross-validation</h3><p>Evaluate classifiers across multiple folds to see how results vary across data partitions.</p><a href="{{ url_for('library') }}#generated-outputs">Browse validation reports →</a></article>
-</div>
-
-<div class="info-note teal" style="margin-top:28px;">
-    Scores are the saved holdout evaluation results. The binary target is strongly imbalanced, so accuracy alone can hide errors on the less common glucose class; review precision, recall, and F1 together. These model scores are research outputs, not clinical guidance.
-</div>
-
-<script>
-(() => {
-    const selector = document.getElementById("metric-selector");
-    const chart = document.getElementById("comparison-chart");
-    if (!selector || !chart) return;
-    const labels = { accuracy: "Accuracy", precision: "Precision", recall: "Recall", f1_score: "F1 Score" };
-    const rows = [...chart.querySelectorAll(".comparison-row")];
-    const winner = document.getElementById("comparison-winner");
-    function updateComparison() {
-        const metric = selector.value;
-        const sorted = [...rows].sort((a, b) => Number(b.dataset[metric]) - Number(a.dataset[metric]));
-        sorted.forEach((row, index) => {
-            const score = Number(row.dataset[metric]);
-            row.querySelector(".comparison-score").textContent = `${score.toFixed(2)}%`;
-            row.querySelector(".comparison-fill").style.width = `${Math.max(0, Math.min(score, 100))}%`;
-            row.querySelector(".comparison-rank").textContent = `#${index + 1}`;
-            chart.appendChild(row);
-        });
-        winner.textContent = `${sorted[0].dataset.model} leads on ${labels[metric]} (${Number(sorted[0].dataset[metric]).toFixed(2)}%).`;
-    }
-    selector.addEventListener("change", updateComparison);
-    updateComparison();
-})();
-</script>
+<div class="info-note teal model-eval-note">The binary out-of-range class appears in one participant, so Logistic Regression uses a stratified row holdout; its score does not measure generalization to unseen participants. Other supervised models use participant holdouts, except Decision Tree 5-fold CV. These results are educational and are not clinical validation.</div>
 {% endblock %}

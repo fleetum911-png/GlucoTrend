@@ -4,11 +4,7 @@
 <section class="hero">
     <span class="eyebrow">outputs/</span>
     <h1>Visualization</h1>
-    <p class="lede">
-        Every image below is pulled live from the <code>outputs/</code> folder — nothing is
-        hardcoded. Run the corresponding <code>src/</code> script and refresh this page to
-        see new charts appear automatically.
-    </p>
+    <p class="lede">Explore generated charts, metrics, datasets, predictions, and model artifacts. The complete output list follows the ML workflow from M1 through M6.</p>
 </section>
 
 {% if gallery %}
@@ -25,8 +21,50 @@
     {% endfor %}
 {% else %}
 <div class="stub-note">
-    No output images found yet. Run <code>python main.py</code> to generate the EDA charts,
+    No output images found yet. Run the full analysis workflow to generate the EDA charts,
     confusion matrices, feature-importance plots, and cluster visualizations.
 </div>
 {% endif %}
+
+<section class="library-section" id="outputs">
+    <div class="section-title"><h2>All generated outputs</h2><span class="hint">{{ outputs|length }} files · grouped by ML flow</span></div>
+    <label class="library-search"><span aria-hidden="true">⌕</span><input type="search" id="output-search" placeholder="Search all outputs…" aria-label="Search generated outputs"></label>
+    {% for topic, topic_outputs in output_groups.items() %}
+    <section class="report-topic output-topic">
+        <div class="section-title"><h3>{{ topic }}</h3><span class="hint">{{ topic_outputs|length }} files</span></div>
+        <div class="table-scroll">
+            <table class="output-table">
+                <thead><tr><th>Output</th><th>File</th><th>Type</th><th>Size</th><th></th></tr></thead>
+                <tbody>
+                {% for output in topic_outputs %}
+                <tr data-search="{{ (output.label ~ ' ' ~ output.path ~ ' ' ~ output.kind ~ ' ' ~ output.topic)|lower }}">
+                    <td><b>{{ output.label }}</b></td>
+                    <td><code>{{ output.path }}</code></td>
+                    <td><span class="badge badge-outline">{{ output.kind }}</span></td>
+                    <td>{{ output.size_kb }} KB</td>
+                    <td><a class="btn btn-secondary" href="{{ url_for('outputs_file', filename=output.path) }}" {% if output.kind in ['PNG','JPG','JPEG','WEBP','SVG','PDF'] %}target="_blank"{% endif %}>Open</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endfor %}
+</section>
+<script>
+document.getElementById('output-search').addEventListener('input', (event) => {
+    const query = event.target.value.trim().toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('.output-topic').forEach((section) => {
+        let sectionVisible = 0;
+        section.querySelectorAll('tbody tr').forEach((row) => {
+            row.hidden = !row.dataset.search.includes(query);
+            if (!row.hidden) { visible += 1; sectionVisible += 1; }
+        });
+        section.hidden = sectionVisible === 0;
+    });
+    document.getElementById('output-empty').hidden = visible > 0;
+});
+</script>
+<p class="empty-filter" id="output-empty" hidden>No outputs match that search.</p>
 {% endblock %}
